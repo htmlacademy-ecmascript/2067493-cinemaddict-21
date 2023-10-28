@@ -6,7 +6,7 @@ function createNumberOfFilmsTemplate() {
   `;
 }
 
-export default class NumberOfFilm extends AbstractView {
+export default class NumberOfFilms extends AbstractView {
   get template() {
     return createNumberOfFilmsTemplate();
   }
