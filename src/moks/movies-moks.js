@@ -1,15 +1,19 @@
 import { nanoid } from 'nanoid';
 import { getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate} from '../utils.js';
 import {COUTNRY, GENRE, WRITERS, ACTORS, DIRECTOR, DESCRIPTION, POSTERS, AGE_RATING, RATING, ALTERNATIVE_TITLE, TITLE} from '../const.js';
+import { commentsId } from './comment-moks.js';
 
 function createMovie () {
   const numberTitle = getRandomInteger(0, TITLE.length);
   const stayWatching = !!getRandomInteger(0, 1);
   const getWathingDate = () => stayWatching ? dateWathing() : null;
-
+  const indexComments = getRandomInteger(commentsId.length / 2, commentsId.length);
   return {
     id: nanoid(),
-    comments: [],
+    comments: [
+      ...commentsId.slice(getRandomInteger(0,indexComments), indexComments),
+      ...commentsId.slice(indexComments + 1)
+    ],
     filmInfo: {
       title: TITLE[numberTitle],
       alternativeTitle: ALTERNATIVE_TITLE[numberTitle],
