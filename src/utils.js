@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-dayjs.extend(isBetween);
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
+
+const SECOND_PER_MINUTE = 60;
+const MILISECOND_PER_SECOND = 1000;
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -29,4 +32,8 @@ const dateWathing = () => dayjs().subtract(getRandomInteger(0, 14), 'day')
   .subtract(getRandomInteger(0, 30), 'minute')
   .toDate();
 
-export { getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate };
+const getDateFormate = (date, dateFormate) => dayjs(date).format(dateFormate);
+
+const durationMovies = (minute, format) => dayjs.duration(SECOND_PER_MINUTE * minute * MILISECOND_PER_SECOND).format(format);
+
+export { getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate, getDateFormate, durationMovies };

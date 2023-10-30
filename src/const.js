@@ -48,13 +48,13 @@ const AGE_RATING = [
 ];
 
 const POSTERS = [
-  './public/images/posters/made-for-each-other.png',
-  './public/images/posters/popeye-meets-sinbad.png',
-  './public/images/posters/sagebrush-trail.jpg',
-  './public/images/posters/santa-claus-conquers-the-martians.jpg',
-  './public/images/posters/the-dance-of-life.jpg',
-  './public/images/posters/the-great-flamarion.jpg',
-  './public/images/posters/the-man-with-the-golden-arm.jpg'
+  './images/posters/made-for-each-other.png',
+  './images/posters/popeye-meets-sinbad.png',
+  './images/posters/sagebrush-trail.jpg',
+  './images/posters/santa-claus-conquers-the-martians.jpg',
+  './images/posters/the-dance-of-life.jpg',
+  './images/posters/the-great-flamarion.jpg',
+  './images/posters/the-man-with-the-golden-arm.jpg'
 ];
 
 const DIRECTOR = [
@@ -102,4 +102,9 @@ const COUTNRY = [
   'England'
 ];
 
-export {COUTNRY, GENRE, WRITERS, ACTORS, DIRECTOR, DESCRIPTION, POSTERS, AGE_RATING, RATING, ALTERNATIVE_TITLE, TITLE};
+const FORMATE_DATE = {
+  yaerReleas: 'YYYY',
+  durationMovies:'h[h] m[m]',
+};
+
+export {COUTNRY, GENRE, WRITERS, ACTORS, DIRECTOR, DESCRIPTION, POSTERS, AGE_RATING, RATING, ALTERNATIVE_TITLE, TITLE, FORMATE_DATE};

@@ -7,7 +7,7 @@ function createMovie () {
   const numberTitle = getRandomInteger(0, TITLE.length);
   const stayWatching = !!getRandomInteger(0, 1);
   const getWathingDate = () => stayWatching ? dateWathing() : null;
-  const indexComments = getRandomInteger(commentsId.length / 2, commentsId.length);
+  const indexComments = getRandomInteger(commentsId.length / 4, commentsId.length);
   return {
     id: nanoid(),
     comments: [

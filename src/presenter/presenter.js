@@ -7,6 +7,10 @@ import MovieCard from '../view/movie-card.js';
 import NumberOfFilms from '../view/number-of-films.js';
 import { render } from '../framework/render.js';
 
+const CLASS_EXTRA = {
+  RATING: 'extra--rating',
+  COMMENT: 'extra--comment'
+};
 export default class Presenter {
   #infoUser = new InfoUser();
   #filter = new Filter();
@@ -17,11 +21,13 @@ export default class Presenter {
   #containerInfoUser = null;
   #contentContainer = null;
   #containerNumberOfFilms = null;
+  #movies = [];
 
-  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms }) {
+  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel }) {
     this.#containerInfoUser = containerInfoUser;
     this.#contentContainer = contentContainer;
     this.#containerNumberOfFilms = containerNumberOfFilms;
+    this.#movies = moviesModel;
   }
 
   init() {
@@ -31,10 +37,9 @@ export default class Presenter {
     this.#renderContainerMovies();
     this.#renderListMovies();
     this.#renderCards({ container: this.#moviesList.element });
+    this.#renderListMoviesExtra(CLASS_EXTRA.RATING);
+    this.#renderListMoviesExtra(CLASS_EXTRA.COMMENT);
 
-    for(let i = 1; i <= 2; i++) {
-      this.#renderListMoviesExtra();
-    }
 
     this.#renderNumberOfFilms();
   }
@@ -59,28 +64,36 @@ export default class Presenter {
     render(this.#moviesList, this.#containerMovies.element);
   }
 
-  #renderListMoviesExtra() {
+  #renderListMoviesExtra(addClass) {
     const listExtra = new MoviesList();
-    listExtra.element
-      .classList.add('films-list--extra');
+
+    listExtra.element.classList.add('films-list--extra');
+    listExtra.element.classList.add(addClass);
+
     render(listExtra, this.#containerMovies.element);
-    this.#renderCards({container: listExtra.element});
+    this.#renderCards({ container: listExtra.element });
   }
 
   #renderCards = ({ container }) => {
-    if (container.classList.contains('films-list--extra')) {
-      for (let i = 1; i <= 2; i++) {
-        this.#renderCardMovie({ containerCards: container });
-      }
-    } else {
-      for (let i = 1; i <= 5; i++) {
-        this.#renderCardMovie({ containerCards: container });
-      }
+    if (container.classList.contains(CLASS_EXTRA.RATING)) {
+      const moviesRating = [...this.#movies.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)]
+        .slice(0, 2);
+      moviesRating.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
+      return;
     }
+
+    if (container.classList.contains(CLASS_EXTRA.COMMENT)) {
+      const moviesComments = [...this.#movies.sort((a, b) => b.comments.length - a.comments.length)]
+        .slice(0, 2);
+      moviesComments.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
+      return;
+    }
+    this.#movies.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
+
   };
 
-  #renderCardMovie({ containerCards }) {
-    const movieCard = new MovieCard();
+  #renderCardMovie({ containerCards, movie }) {
+    const movieCard = new MovieCard({ movie });
     const container = containerCards.querySelector('.films-list__container');
     render(movieCard, container);
   }
