@@ -5,7 +5,10 @@ import ContainerMovies from '../view/container-movies.js';
 import MoviesList from '../view/movies-list.js';
 import MovieCard from '../view/movie-card.js';
 import NumberOfFilms from '../view/number-of-films.js';
-import { render } from '../framework/render.js';
+import ShowMoreButton from '../view/show-more-button.js';
+import { render, remove } from '../framework/render.js';
+
+const MOVIES_COUNT_PER_STEP = 5;
 
 const CLASS_EXTRA = {
   RATING: 'extra--rating',
@@ -18,16 +21,18 @@ export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
+  #showMoreButton = null;
   #containerInfoUser = null;
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #movies = [];
+  #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
 
   constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel }) {
     this.#containerInfoUser = containerInfoUser;
     this.#contentContainer = contentContainer;
     this.#containerNumberOfFilms = containerNumberOfFilms;
-    this.#movies = moviesModel;
+    this.#movies = [...moviesModel];
   }
 
   init() {
@@ -37,6 +42,7 @@ export default class Presenter {
     this.#renderContainerMovies();
     this.#renderListMovies();
     this.#renderCards({ container: this.#moviesList.element });
+    this.#renderShowMoreButton();
     this.#renderListMoviesExtra(CLASS_EXTRA.RATING);
     this.#renderListMoviesExtra(CLASS_EXTRA.COMMENT);
 
@@ -66,9 +72,13 @@ export default class Presenter {
 
   #renderListMoviesExtra(addClass) {
     const listExtra = new MoviesList();
+    const header = listExtra.element.querySelector('.films-list__title');
 
     listExtra.element.classList.add('films-list--extra');
     listExtra.element.classList.add(addClass);
+
+    header.classList.remove('visually-hidden');
+    header.textContent = addClass === CLASS_EXTRA.RATING ? 'Top rated' : 'Most commented';
 
     render(listExtra, this.#containerMovies.element);
     this.#renderCards({ container: listExtra.element });
@@ -88,8 +98,10 @@ export default class Presenter {
       moviesComments.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
       return;
     }
-    this.#movies.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
 
+    this.#movies
+      .slice(0, Math.min(this.#movies.length, this.#renderedMoviesCount))
+      .forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
   };
 
   #renderCardMovie({ containerCards, movie }) {
@@ -97,6 +109,28 @@ export default class Presenter {
     const container = containerCards.querySelector('.films-list__container');
     render(movieCard, container);
   }
+
+  #renderShowMoreButton() {
+    if (this.#movies.length > MOVIES_COUNT_PER_STEP) {
+      this.#showMoreButton = new ShowMoreButton({
+        onClick: this.#handlerClickShowMoreButton
+      });
+
+      render(this.#showMoreButton, this.#containerMovies.element);
+    }
+  }
+
+  #handlerClickShowMoreButton = () => {
+    this.#movies
+      .slice(this.#renderedMoviesCount, this.#renderedMoviesCount + MOVIES_COUNT_PER_STEP)
+      .forEach((movie) => this.#renderCardMovie({ containerCards: this.#moviesList.element, movie }));
+
+    this.#renderedMoviesCount += MOVIES_COUNT_PER_STEP;
+
+    if (this.#renderedMoviesCount >= this.#movies.length) {
+      remove(this.#showMoreButton);
+    }
+  };
 
   #renderNumberOfFilms() {
     render(this.#numberOfFilms, this.#containerNumberOfFilms);
