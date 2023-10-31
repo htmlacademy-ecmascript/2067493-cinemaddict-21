@@ -41,10 +41,10 @@ const RATING = {
 };
 
 const AGE_RATING = [
-  0,
-  6,
-  12,
-  18
+  '0+',
+  '6+',
+  '12+',
+  '18+'
 ];
 
 const POSTERS = [
@@ -104,7 +104,9 @@ const COUTNRY = [
 
 const FORMATE_DATE = {
   yaerReleas: 'YYYY',
-  durationMovies:'h[h] m[m]',
+  durationMovies:'H[h] m[m]',
+  releasDatePopup: 'DD MMMM YYYY',
+  commentDate: 'YYYY/MM/DD HH:mm'
 };
 
 export {COUTNRY, GENRE, WRITERS, ACTORS, DIRECTOR, DESCRIPTION, POSTERS, AGE_RATING, RATING, ALTERNATIVE_TITLE, TITLE, FORMATE_DATE};

@@ -5,9 +5,10 @@ import { comments } from './moks/comment-moks.js';
 const containerInfoUser = document.querySelector('.header');
 const contentContainer = document.querySelector('.main');
 const containerNumberOfFilms = document.querySelector('.footer__statistics');
+const body = document.querySelector('body');
 
 const moviesModel = new MoviesModel ({movieComments: comments});
 
-const presenter = new Presenter ({containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel: moviesModel.movies });
+const presenter = new Presenter ({containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel: moviesModel.movies, comments: moviesModel.commentsMovie, body});
 presenter.init();
 

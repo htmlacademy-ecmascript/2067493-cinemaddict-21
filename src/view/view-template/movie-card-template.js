@@ -3,6 +3,7 @@ import { FORMATE_DATE } from '../../const.js';
 
 function createMovieCardTemplate({filmInfo, comments}) {
   const {title, totalRating, releas, duration, description, genre, poster } = filmInfo;
+
   return `
  <article class="film-card">
     <a class="film-card__link">

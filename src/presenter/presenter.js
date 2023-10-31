@@ -6,6 +6,8 @@ import MoviesList from '../view/movies-list.js';
 import MovieCard from '../view/movie-card.js';
 import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
+import PopupContainer from '../view/popup-container.js';
+import PopupMovie from '../view/popup-movie.js';
 import { render, remove } from '../framework/render.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
@@ -21,18 +23,24 @@ export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
+  #popupContainer = new PopupContainer ();
+  #bodyContainer = null;
+  #popupMovie = null;
   #showMoreButton = null;
   #containerInfoUser = null;
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #movies = [];
+  #comments = [];
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
 
-  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel }) {
+  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel, comments, body }) {
     this.#containerInfoUser = containerInfoUser;
     this.#contentContainer = contentContainer;
     this.#containerNumberOfFilms = containerNumberOfFilms;
     this.#movies = [...moviesModel];
+    this.#comments = comments;
+    this.#bodyContainer = body;
   }
 
   init() {
@@ -45,9 +53,18 @@ export default class Presenter {
     this.#renderShowMoreButton();
     this.#renderListMoviesExtra(CLASS_EXTRA.RATING);
     this.#renderListMoviesExtra(CLASS_EXTRA.COMMENT);
-
-
     this.#renderNumberOfFilms();
+    this.#renderPopupContainer();
+    this.#renderPopupMovie();
+  }
+
+  #renderPopupContainer () {
+    render(this.#popupContainer, this.#bodyContainer);
+  }
+
+  #renderPopupMovie () {
+    this.#popupMovie = new PopupMovie ({movie: this.#movies[0], comments: this.#comments});
+    render(this.#popupMovie, this.#popupContainer.element);
   }
 
   #renderInfoUser() {
@@ -86,14 +103,14 @@ export default class Presenter {
 
   #renderCards = ({ container }) => {
     if (container.classList.contains(CLASS_EXTRA.RATING)) {
-      const moviesRating = [...this.#movies.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)]
+      const moviesRating = [...this.#movies].sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating)
         .slice(0, 2);
       moviesRating.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
       return;
     }
 
     if (container.classList.contains(CLASS_EXTRA.COMMENT)) {
-      const moviesComments = [...this.#movies.sort((a, b) => b.comments.length - a.comments.length)]
+      const moviesComments = [...this.#movies].sort((a, b) => b.comments.length - a.comments.length)
         .slice(0, 2);
       moviesComments.forEach((movie) => this.#renderCardMovie({ containerCards: container, movie }));
       return;
