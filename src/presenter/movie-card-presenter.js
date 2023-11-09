@@ -49,12 +49,14 @@ export default class MovieCardPresenter {
   }
 
   #renderPopupMovie() {
+    this.#bodyContainer.classList.add('hide-overflow');
     this.#renderPopupContainer();
     render(this.#popupMovie, this.#popupContainer.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   #removePopupMovie() {
+    this.#bodyContainer.classList.remove('hide-overflow');
     remove(this.#popupContainer);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
