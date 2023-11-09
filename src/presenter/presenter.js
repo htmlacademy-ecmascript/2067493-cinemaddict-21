@@ -6,6 +6,7 @@ import MoviesList from '../view/movies-list.js';
 import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
 import MovieCardPresenter from './movie-card-presenter.js';
+import Empty from '../view/empty.js';
 import { render, remove } from '../framework/render.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
@@ -21,6 +22,7 @@ export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
+  #empty = new Empty();
   #bodyContainer = null;
   #showMoreButton = null;
   #containerInfoUser = null;
@@ -68,11 +70,23 @@ export default class Presenter {
     render(this.#containerMovies, this.#contentContainer);
   }
 
+  #renderEmpty () {
+    render(this.#empty, this.#containerMovies.element);
+  }
+
   #renderListMovies() {
+    if(this.#movies.length === 0){
+      this.#renderEmpty();
+      return;
+    }
     render(this.#moviesList, this.#containerMovies.element);
   }
 
   #renderListMoviesExtra(addClass) {
+    if(this.#movies.length === 0){
+      return;
+    }
+
     const listExtra = new MoviesList();
     const header = listExtra.element.querySelector('.films-list__title');
 
@@ -115,6 +129,7 @@ export default class Presenter {
 
     movieCard.init(movie);
   }
+
 
   #renderShowMoreButton() {
     if (this.#movies.length > MOVIES_COUNT_PER_STEP) {
