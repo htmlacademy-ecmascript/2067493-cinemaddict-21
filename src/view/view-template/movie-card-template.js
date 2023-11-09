@@ -1,8 +1,10 @@
 import { getDateFormate, durationMovies } from '../../utils.js';
 import { FORMATE_DATE } from '../../const.js';
 
-function createMovieCardTemplate({filmInfo, comments}) {
+function createMovieCardTemplate({filmInfo, comments, userDetails}) {
   const {title, totalRating, releas, duration, description, genre, poster } = filmInfo;
+  const {watchlist, alreadyWatched, favorite} = userDetails;
+  const classActive = 'film-details__control-button--active';
 
   return `
  <article class="film-card">
@@ -19,9 +21,9 @@ function createMovieCardTemplate({filmInfo, comments}) {
       <span class="film-card__comments">${comments.length}</span>
     </a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-      <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item film-card__controls-item--add-to-watchlistм ${watchlist ? classActive : '' }" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${ alreadyWatched ? classActive : ''}" type="button">Mark as watched</button>
+      <button class="film-card__controls-item film-card__controls-item--favorite ${ favorite ? classActive : ''}" type="button">Mark as favorite</button>
     </div>
   </article>
  `;
