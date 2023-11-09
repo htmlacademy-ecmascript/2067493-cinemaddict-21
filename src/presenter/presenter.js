@@ -3,11 +3,9 @@ import Filter from '../view/filter.js';
 import ListSort from '../view/list-sort.js';
 import ContainerMovies from '../view/container-movies.js';
 import MoviesList from '../view/movies-list.js';
-import MovieCard from '../view/movie-card.js';
 import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
-import PopupContainer from '../view/popup-container.js';
-import PopupMovie from '../view/popup-movie.js';
+import MovieCardPresenter from './movie-card-presenter.js';
 import { render, remove } from '../framework/render.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
@@ -23,9 +21,7 @@ export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
-  #popupContainer = new PopupContainer ();
   #bodyContainer = null;
-  #popupMovie = null;
   #showMoreButton = null;
   #containerInfoUser = null;
   #contentContainer = null;
@@ -54,17 +50,6 @@ export default class Presenter {
     this.#renderListMoviesExtra(CLASS_EXTRA.RATING);
     this.#renderListMoviesExtra(CLASS_EXTRA.COMMENT);
     this.#renderNumberOfFilms();
-    this.#renderPopupContainer();
-    this.#renderPopupMovie();
-  }
-
-  #renderPopupContainer () {
-    render(this.#popupContainer, this.#bodyContainer);
-  }
-
-  #renderPopupMovie () {
-    this.#popupMovie = new PopupMovie ({movie: this.#movies[0], comments: this.#comments});
-    render(this.#popupMovie, this.#popupContainer.element);
   }
 
   #renderInfoUser() {
@@ -122,9 +107,13 @@ export default class Presenter {
   };
 
   #renderCardMovie({ containerCards, movie }) {
-    const movieCard = new MovieCard({ movie });
-    const container = containerCards.querySelector('.films-list__container');
-    render(movieCard, container);
+    const movieCard = new MovieCardPresenter({
+      containerCards,
+      comments: this.#comments,
+      bodyContainer: this.#bodyContainer
+    });
+
+    movieCard.init(movie);
   }
 
   #renderShowMoreButton() {
