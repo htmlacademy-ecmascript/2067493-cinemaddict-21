@@ -1,10 +1,23 @@
-function createFilterTemplate() {
+import { FILTER_TYPE } from '../../const.js';
+
+
+function createItemFilterTemplate(filter, isChekced) {
+  const {type, count} = filter;
+  const classActive = 'main-navigation__item--active';
+  return `
+  <a href="#${type.toLowerCase()}"
+  class="main-navigation__item ${isChekced ? classActive : ''}">
+  ${type === FILTER_TYPE.ALL ? 'All movies'
+    : `${type} <span class="main-navigation__item-count">${count}</span>`}</a>
+  `;
+}
+
+function createFilterTemplate(filters) {
+  const filtersItems = filters.map((filter, index) => createItemFilterTemplate(filter, index === 0))
+    .join('');
   return `
   <nav class="main-navigation">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">4</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
+    ${filtersItems}
   </nav>
   `;
 }

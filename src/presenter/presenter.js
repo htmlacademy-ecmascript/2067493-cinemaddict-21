@@ -1,5 +1,4 @@
 import InfoUser from '../view/info-user.js';
-import Filter from '../view/filter.js';
 import ListSort from '../view/list-sort.js';
 import ContainerMovies from '../view/container-movies.js';
 import MoviesList from '../view/movies-list.js';
@@ -17,7 +16,6 @@ const CLASS_EXTRA = {
 };
 export default class Presenter {
   #infoUser = new InfoUser();
-  #filter = new Filter();
   #listSort = new ListSort();
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
@@ -43,7 +41,6 @@ export default class Presenter {
 
   init() {
     this.#renderInfoUser();
-    this.#renderFilter();
     this.#renderListSort();
     this.#renderContainerMovies();
     this.#renderListMovies();
@@ -56,10 +53,6 @@ export default class Presenter {
 
   #renderInfoUser() {
     render(this.#infoUser, this.#containerInfoUser);
-  }
-
-  #renderFilter() {
-    render(this.#filter, this.#contentContainer);
   }
 
   #renderListSort() {
