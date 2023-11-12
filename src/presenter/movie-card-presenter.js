@@ -37,6 +37,11 @@ export default class MovieCardPresenter {
     render(this.#movieCard, this.#containerCards);
   }
 
+  destroy() {
+    remove(this.#movieCard);
+    remove(this.#popupMovie);
+  }
+
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();

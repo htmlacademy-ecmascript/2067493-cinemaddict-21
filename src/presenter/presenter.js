@@ -21,6 +21,7 @@ export default class Presenter {
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
   #empty = new Empty();
+  #cardsMoviesPresentrs = new Map();
   #bodyContainer = null;
   #showMoreButton = null;
   #containerInfoUser = null;
@@ -119,10 +120,16 @@ export default class Presenter {
       comments: this.#comments,
       bodyContainer: this.#bodyContainer
     });
-
+    this.#cardsMoviesPresentrs.set(movie.id, movieCard);
     movieCard.init(movie);
   }
 
+  #clearMoviesCard() {
+    this.#cardsMoviesPresentrs.forEach((presenter) => presenter.destroy);
+    this.#cardsMoviesPresentrs.clear();
+    this.#renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+    remove(this.#showMoreButton);
+  }
 
   #renderShowMoreButton() {
     if (this.#movies.length > MOVIES_COUNT_PER_STEP) {
