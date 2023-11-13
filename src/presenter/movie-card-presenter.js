@@ -4,7 +4,7 @@ import MovieCard from '../view/movie-card.js';
 import { render, remove, replace } from '../framework/render.js';
 
 export default class MovieCardPresenter {
-  #popupContainer = new PopupContainer ();
+  #popupContainer = new PopupContainer();
   #bodyContainer = null;
   #containerCards = null;
 
@@ -14,10 +14,13 @@ export default class MovieCardPresenter {
   #comments = [];
   #movie = null;
 
-  constructor ({containerCards, comments, bodyContainer}) {
+  #handleDataChange = null;
+
+  constructor({ containerCards, comments, bodyContainer, onDateChange }) {
     this.#containerCards = containerCards.querySelector('.films-list__container');
     this.#comments = comments;
     this.#bodyContainer = bodyContainer;
+    this.#handleDataChange = onDateChange;
   }
 
   init(movie) {
@@ -28,27 +31,35 @@ export default class MovieCardPresenter {
 
     this.#movieCard = new MovieCard({
       movie: this.#movie,
-      onePopupClick: this.#handlePopupClick
+      onPopupClick: this.#handlePopupClick,
+      onWatchlistClick: this.#handlerChangeWatchlist,
+      onFavoriteClick: this.#handlerChangeFavorite,
+      onAlreadyWatched: this.#handlerChangeAlreadyWatched,
     });
 
-    this.#popupMovie = new PopupMovie ({
+    this.#popupMovie = new PopupMovie({
       movie: this.#movie,
       comments: this.#comments,
-      oneClickClosePopup: this.#handleClosePopupClick
+      onClickClosePopup: this.#handleClosePopupClick,
+      onWatchlistClick: this.#handlerChangeWatchlist,
+      onFavoriteClick: this.#handlerChangeFavorite,
+      onAlreadyWatched: this.#handlerChangeAlreadyWatched,
     });
 
 
-    if(prevCardMovie === null && prevPopupMovie === null) {
+    if (prevCardMovie === null && prevPopupMovie === null) {
       render(this.#movieCard, this.#containerCards);
       return;
     }
 
-    if(this.#containerCards.contains(prevCardMovie.element)){
+    if (this.#containerCards.contains(prevCardMovie.element)) {
       replace(this.#movieCard, prevCardMovie);
     }
 
-    if(this.#popupContainer.contains(prevPopupMovie.element)){
-      replace(this.#popupMovie, prevPopupMovie);
+    if (document.contains(this.#popupContainer.element)) {
+      if(this.#popupContainer.element.contains(prevPopupMovie.element)) {
+        replace(this.#popupMovie, prevPopupMovie);
+      }
     }
 
     remove(prevCardMovie);
@@ -67,7 +78,7 @@ export default class MovieCardPresenter {
     }
   };
 
-  #renderPopupContainer () {
+  #renderPopupContainer() {
     render(this.#popupContainer, this.#bodyContainer);
   }
 
@@ -90,6 +101,30 @@ export default class MovieCardPresenter {
 
   #handleClosePopupClick = () => {
     this.#removePopupMovie();
+  };
+
+  #handlerChangeWatchlist = () => {
+    this.#handleDataChange({ ...this.#movie, userDetails: {
+      ...this.#movie.userDetails,
+      watchlist: !this.#movie.userDetails.watchlist }});
+  };
+
+  #handlerChangeFavorite = () => {
+    this.#handleDataChange({ ...this.#movie, userDetails: {
+      ...this.#movie.userDetails,
+      favorite: !this.#movie.userDetails.favorite } });
+  };
+
+  #handlerChangeAlreadyWatched = () => {
+    this.#handleDataChange({
+      ...this.#movie, userDetails: {
+        ...this.#movie.userDetails,
+        alreadyWatched: !this.#movie.userDetails.alreadyWatched,
+        watchingDate: this.#movie.userDetails.watchingDate === null
+          ? this.#movie.userDetails.watchingDate = new Date()
+          : this.#movie.userDetails.watchingDat = null
+      }
+    });
   };
 
 }

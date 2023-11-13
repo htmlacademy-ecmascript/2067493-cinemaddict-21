@@ -44,4 +44,6 @@ const getDateFormate = (date, dateFormate) => dayjs(date).format(dateFormate);
 
 const durationMovies = (minute, format) => dayjs.duration(SECOND_PER_MINUTE * minute * MILISECOND_PER_SECOND).format(format);
 
-export { filters , getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate, getDateFormate, durationMovies };
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+export { filters , getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate, getDateFormate, durationMovies, updateItem };
