@@ -3,6 +3,10 @@ import PopupMovie from '../view/popup-movie.js';
 import MovieCard from '../view/movie-card.js';
 import { render, remove, replace } from '../framework/render.js';
 
+const Mode = {
+  CARD: 'CARD',
+  POPUP: 'POPUP'
+};
 export default class MovieCardPresenter {
   #popupContainer = new PopupContainer();
   #bodyContainer = null;
@@ -15,12 +19,16 @@ export default class MovieCardPresenter {
   #movie = null;
 
   #handleDataChange = null;
+  #handleModeChange = null;
 
-  constructor({ containerCards, comments, bodyContainer, onDateChange }) {
+  #mode = Mode.CARD;
+
+  constructor({ containerCards, comments, bodyContainer, onDateChange, onModeChange }) {
     this.#containerCards = containerCards.querySelector('.films-list__container');
     this.#comments = comments;
     this.#bodyContainer = bodyContainer;
     this.#handleDataChange = onDateChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(movie) {
@@ -52,18 +60,22 @@ export default class MovieCardPresenter {
       return;
     }
 
-    if (this.#containerCards.contains(prevCardMovie.element)) {
+    if (this.#mode === Mode.CARD) {
       replace(this.#movieCard, prevCardMovie);
     }
 
-    if (document.contains(this.#popupContainer.element)) {
-      if(this.#popupContainer.element.contains(prevPopupMovie.element)) {
-        replace(this.#popupMovie, prevPopupMovie);
-      }
+    if (this.#mode === Mode.POPUP) {
+      replace(this.#popupMovie, prevPopupMovie);
     }
 
     remove(prevCardMovie);
     remove(prevPopupMovie);
+  }
+
+  resetView() {
+    if(this.#mode !== Mode.CARD) {
+      this.#removePopupMovie();
+    }
   }
 
   destroy() {
@@ -87,12 +99,15 @@ export default class MovieCardPresenter {
     this.#renderPopupContainer();
     render(this.#popupMovie, this.#popupContainer.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.POPUP;
   }
 
   #removePopupMovie() {
     this.#bodyContainer.classList.remove('hide-overflow');
     remove(this.#popupContainer);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.CARD;
   }
 
   #handlePopupClick = () => {
@@ -104,15 +119,21 @@ export default class MovieCardPresenter {
   };
 
   #handlerChangeWatchlist = () => {
-    this.#handleDataChange({ ...this.#movie, userDetails: {
-      ...this.#movie.userDetails,
-      watchlist: !this.#movie.userDetails.watchlist }});
+    this.#handleDataChange({
+      ...this.#movie, userDetails: {
+        ...this.#movie.userDetails,
+        watchlist: !this.#movie.userDetails.watchlist
+      }
+    });
   };
 
   #handlerChangeFavorite = () => {
-    this.#handleDataChange({ ...this.#movie, userDetails: {
-      ...this.#movie.userDetails,
-      favorite: !this.#movie.userDetails.favorite } });
+    this.#handleDataChange({
+      ...this.#movie, userDetails: {
+        ...this.#movie.userDetails,
+        favorite: !this.#movie.userDetails.favorite
+      }
+    });
   };
 
   #handlerChangeAlreadyWatched = () => {

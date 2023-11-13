@@ -83,10 +83,15 @@ export default class Presenter {
       comments: this.#comments,
       bodyContainer: this.#bodyContainer,
       onDateChange: this.#handlerChangeMovies,
+      onModeChange: this.#handleChangeMode
     });
     this.#cardsMoviesPresentrs.set(movie.id, movieCard);
     movieCard.init(movie);
   }
+
+  #handleChangeMode = () => {
+    this.#cardsMoviesPresentrs.forEach((presenter) => presenter.resetView());
+  };
 
   #clearMoviesCard() {
     this.#cardsMoviesPresentrs.forEach((presenter) => presenter.destroy);
