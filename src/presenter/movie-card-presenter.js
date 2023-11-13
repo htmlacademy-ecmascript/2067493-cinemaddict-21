@@ -1,7 +1,7 @@
 import PopupContainer from '../view/popup-container.js';
 import PopupMovie from '../view/popup-movie.js';
 import MovieCard from '../view/movie-card.js';
-import { render, remove } from '../framework/render.js';
+import { render, remove, replace } from '../framework/render.js';
 
 export default class MovieCardPresenter {
   #popupContainer = new PopupContainer ();
@@ -23,6 +23,9 @@ export default class MovieCardPresenter {
   init(movie) {
     this.#movie = movie;
 
+    const prevCardMovie = this.#movieCard;
+    const prevPopupMovie = this.#popupMovie;
+
     this.#movieCard = new MovieCard({
       movie: this.#movie,
       onePopupClick: this.#handlePopupClick
@@ -34,7 +37,22 @@ export default class MovieCardPresenter {
       oneClickClosePopup: this.#handleClosePopupClick
     });
 
-    render(this.#movieCard, this.#containerCards);
+
+    if(prevCardMovie === null && prevPopupMovie === null) {
+      render(this.#movieCard, this.#containerCards);
+      return;
+    }
+
+    if(this.#containerCards.contains(prevCardMovie.element)){
+      replace(this.#movieCard, prevCardMovie);
+    }
+
+    if(this.#popupContainer.contains(prevPopupMovie.element)){
+      replace(this.#popupMovie, prevPopupMovie);
+    }
+
+    remove(prevCardMovie);
+    remove(prevPopupMovie);
   }
 
   destroy() {
