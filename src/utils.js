@@ -45,5 +45,5 @@ const getDateFormate = (date, dateFormate) => dayjs(date).format(dateFormate);
 const durationMovies = (minute, format) => dayjs.duration(SECOND_PER_MINUTE * minute * MILISECOND_PER_SECOND).format(format);
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
-export { filters , getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate, getDateFormate, durationMovies, updateItem };
+const diffDate = (dateA, dateB) => dayjs(dateB).diff(dayjs(dateA));
+export { diffDate, filters , getRandomArrayElement, getRandomIntegerRating, getRandomInteger, dateWathing, getRandomDate, getDateFormate, durationMovies, updateItem };

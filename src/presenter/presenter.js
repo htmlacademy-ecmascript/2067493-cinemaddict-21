@@ -6,7 +6,7 @@ import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
 import MovieCardPresenter from './movie-card-presenter.js';
 import Empty from '../view/empty.js';
-import { updateItem } from '../utils.js';
+import { updateItem, diffDate } from '../utils.js';
 import { render, remove } from '../framework/render.js';
 import { SORT_TYPE } from '../const.js';
 
@@ -61,7 +61,7 @@ export default class Presenter {
 
     switch (sortType) {
       case SORT_TYPE.DATE:
-        this.#movies.sort((a, b) => b.filmInfo.releas.date - a.filmInfo.releas.date);
+        this.#movies.sort((a, b) => diffDate(a.filmInfo.releas.date, b.filmInfo.releas.date));
         break;
       case SORT_TYPE.RETING:
         this.#movies.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
