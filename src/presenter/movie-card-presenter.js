@@ -47,7 +47,7 @@ export default class MovieCardPresenter {
 
     this.#popupMovie = new PopupMovie({
       movie: this.#movie,
-      comments: this.#comments,
+      comments: this.#comments.get(this.#movie.id),
       onClickClosePopup: this.#handleClosePopupClick,
       onWatchlistClick: this.#handlerChangeWatchlist,
       onFavoriteClick: this.#handlerChangeFavorite,

@@ -1,8 +1,11 @@
 import { createPopupDetailsFilm } from './popup-datails-film.js';
 import { createPopupCommentFilm } from './popup-comments-film.js';
+import { createPopupEmojiTemplate } from './popup-emoji-template.js';
+import { createNewComment } from './popup-new-comment.js';
+import { EMOJI } from '../../../const.js';
 
-function createPopupTemplate ({movie, comments}) {
-  const commentsFilm = comments.get(movie.id);
+function createPopupTemplate ({movie}) {
+  const commentsFilm = movie.comments;
   return `
   <div class="film-details__inner">
     ${createPopupDetailsFilm(movie)}
@@ -16,32 +19,9 @@ function createPopupTemplate ({movie, comments}) {
         </ul>
 
         <form class="film-details__new-comment" action="" method="get">
-          <div class="film-details__add-emoji-label"></div>
-
-          <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-          </label>
-
+          ${createNewComment(movie.userTextComment, movie.userEmoji)}
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-            </label>
+            ${EMOJI.map(createPopupEmojiTemplate).join(' ')}
           </div>
         </form>
       </section>

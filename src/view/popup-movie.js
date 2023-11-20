@@ -2,8 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createPopupTemplate } from './view-template/popup/popup-template.js';
 
 export default class PopupMovie extends AbstractStatefulView {
-  #movie = {};
-  #comments = [];
   #handleClosePopup = null;
   #handleClickAlreadyWatched = null;
   #handleClickFavorite = null;
@@ -11,8 +9,7 @@ export default class PopupMovie extends AbstractStatefulView {
 
   constructor ({movie, comments, onClickClosePopup, onAlreadyWatched, onFavoriteClick, onWatchlistClick}) {
     super();
-    this.#movie = movie;
-    this.#comments = comments;
+    this._setState(PopupMovie.parseMovieToState(movie, comments));
 
     this.#handleClosePopup = onClickClosePopup;
     this.#handleClickAlreadyWatched = onAlreadyWatched;
@@ -50,6 +47,15 @@ export default class PopupMovie extends AbstractStatefulView {
   };
 
   get template () {
-    return createPopupTemplate({movie: this.#movie, comments: this.#comments});
+    return createPopupTemplate({movie: this._state});
+  }
+
+  static parseMovieToState(movie, comments) {
+    return {
+      ...movie,
+      userEmoji: '',
+      userTextComment: '',
+      comments: [...comments]
+    };
   }
 }
