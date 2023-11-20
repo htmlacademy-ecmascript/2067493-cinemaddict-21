@@ -16,6 +16,10 @@ export default class PopupMovie extends AbstractStatefulView {
     this.#handleClickFavorite = onFavoriteClick;
     this.#handleClickWatchlist = onWatchlistClick;
 
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.film-details__close-btn')
       .addEventListener('click', this.#closePopupHandler);
     this.element.querySelector('.film-details__control-button--watched')
@@ -24,6 +28,8 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('click', this.#clickFavoriteHandler);
     this.element.querySelector('.film-details__control-button--watchlist')
       .addEventListener('click', this.#clickWatchlistHandler);
+    this.element.querySelector('.film-details__emoji-list')
+      .addEventListener('change', this.#changeEmojiHandler);
   }
 
   #closePopupHandler = (evt) => {
@@ -44,6 +50,15 @@ export default class PopupMovie extends AbstractStatefulView {
   #clickWatchlistHandler = (evt) => {
     evt.preventDefault();
     this.#handleClickWatchlist();
+  };
+
+  #changeEmojiHandler = (evt) => {
+    const prevScroll = this.element.scrollTop;
+    evt.preventDefault();
+    this.updateElement({
+      userEmoji: evt.target.value
+    });
+    this.element.scrollTo(0, prevScroll);
   };
 
   get template () {

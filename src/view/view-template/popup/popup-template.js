@@ -21,7 +21,7 @@ function createPopupTemplate ({movie}) {
         <form class="film-details__new-comment" action="" method="get">
           ${createNewComment(movie.userTextComment, movie.userEmoji)}
           <div class="film-details__emoji-list">
-            ${EMOJI.map(createPopupEmojiTemplate).join(' ')}
+            ${createPopupEmojiTemplate(EMOJI, movie.userEmoji)}
           </div>
         </form>
       </section>
