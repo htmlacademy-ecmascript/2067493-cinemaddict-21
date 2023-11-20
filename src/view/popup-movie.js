@@ -1,7 +1,7 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createPopupTemplate } from './view-template/popup/popup-template.js';
 
-export default class PopupMovie extends AbstractView {
+export default class PopupMovie extends AbstractStatefulView {
   #movie = {};
   #comments = [];
   #handleClosePopup = null;
