@@ -58,7 +58,7 @@ function createPopupDetailsFilm ({filmInfo, userDetails}) {
             <td class="film-details__cell">${releas.releaseCountry}</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
+            <td class="film-details__term">${genre.length > 1 ? 'Genres' : 'Genre'}</td>
             <td class="film-details__cell">
               ${genre.map(createGenre).join(' ')}
           </tr>

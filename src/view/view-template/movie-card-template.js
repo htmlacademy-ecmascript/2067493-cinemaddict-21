@@ -1,6 +1,6 @@
 import { getDateFormate, durationMovies } from '../../utils.js';
 import { FORMATE_DATE } from '../../const.js';
-
+const LENGTH_DESCRIPTION_STEP = 140;
 function createMovieCardTemplate({filmInfo, comments, userDetails}) {
   const {title, totalRating, releas, duration, description, genre, poster } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
@@ -17,7 +17,7 @@ function createMovieCardTemplate({filmInfo, comments, userDetails}) {
         <span class="film-card__genre">${genre.join(' ')}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
+      <p class="film-card__description">${description.length <= LENGTH_DESCRIPTION_STEP ? description : `${description.slice(0, LENGTH_DESCRIPTION_STEP)}...`}</p>
       <span class="film-card__comments">${comments.length} comments</span>
     </a>
     <div class="film-card__controls">

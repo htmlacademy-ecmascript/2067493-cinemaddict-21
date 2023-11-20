@@ -26,7 +26,7 @@ const ALTERNATIVE_TITLE = [
 ];
 
 const DESCRIPTION = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.',
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
   'Fusce tristique felis at fermentum pharetra.',
   'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
   'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
