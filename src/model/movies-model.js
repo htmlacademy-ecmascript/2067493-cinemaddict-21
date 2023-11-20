@@ -1,15 +1,13 @@
 import { createMovie } from '../moks/movies-moks.js';
+import { comments } from '../moks/comment-moks.js';
+import Observable from '../framework/observable.js';
 
 const MOVIES_COUNT = 23;
 
-export default class MoviesModel {
+export default class MoviesModel extends Observable{
   #movies = Array.from({length: MOVIES_COUNT}, createMovie);
-  #comments = null;
+  #comments = comments;
   #comentsMovie = new Map();
-
-  constructor ({movieComments}){
-    this.#comments = movieComments;
-  }
 
   #getCommentsMovie() {
     this.#movies.forEach((movie) => {
