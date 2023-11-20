@@ -60,16 +60,11 @@ export default class MovieCardPresenter {
       return;
     }
 
-    if (this.#mode === Mode.CARD) {
-      replace(this.#movieCard, prevCardMovie);
-    }
+    replace(this.#movieCard, prevCardMovie);
 
     if (this.#mode === Mode.POPUP) {
       replace(this.#popupMovie, prevPopupMovie);
     }
-
-    remove(prevCardMovie);
-    remove(prevPopupMovie);
   }
 
   resetView() {
