@@ -106,6 +106,10 @@ export default class MovieCardPresenter {
   }
 
   #handlePopupClick = () => {
+    if(this.#mode === Mode.POPUP) {
+      return;
+    }
+
     this.#renderPopupMovie();
   };
 
