@@ -30,6 +30,8 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('click', this.#clickWatchlistHandler);
     this.element.querySelector('.film-details__emoji-list')
       .addEventListener('change', this.#changeEmojiHandler);
+    this.element.querySelector('.film-details__comment-input')
+      .addEventListener('input', this.#inputTextCommentHandler);
   }
 
   #closePopupHandler = (evt) => {
@@ -59,6 +61,13 @@ export default class PopupMovie extends AbstractStatefulView {
       userEmoji: evt.target.value
     });
     this.element.scrollTo(0, prevScroll);
+  };
+
+  #inputTextCommentHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      userTextComment: evt.target.value
+    });
   };
 
   get template () {
