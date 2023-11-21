@@ -124,6 +124,18 @@ const SORT_TYPE = {
 
 const EMOJI = ['smile','sleeping','puke','angry'];
 
+const UpdateType = {
+  PATH: 'path',
+  MINOR: 'minor',
+  MAJOR: 'major'
+};
+
+const UserAction = {
+  UPDATE: 'update',
+  DELETE_COMMENT: 'delete comment',
+  ADD_COMMENT: 'add comment'
+};
+
 export {COUTNRY, GENRE, WRITERS, ACTORS, DIRECTOR,
   DESCRIPTION, POSTERS, AGE_RATING, RATING, ALTERNATIVE_TITLE,
-  TITLE, FORMATE_DATE, FILTER_TYPE, SORT_TYPE, EMOJI};
+  TITLE, FORMATE_DATE, FILTER_TYPE, SORT_TYPE, EMOJI, UserAction, UpdateType};

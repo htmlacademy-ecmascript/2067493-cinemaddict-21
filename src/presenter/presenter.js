@@ -6,9 +6,9 @@ import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
 import MovieCardPresenter from './movie-card-presenter.js';
 import Empty from '../view/empty.js';
-import { updateItem, diffDate } from '../utils.js';
+import { diffDate } from '../utils.js';
 import { render, remove } from '../framework/render.js';
-import { SORT_TYPE } from '../const.js';
+import { SORT_TYPE, UserAction, UpdateType } from '../const.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
 
@@ -38,6 +38,8 @@ export default class Presenter {
 
     this.#commentsModel = commentsModel;
     this.#bodyContainer = body;
+
+    this.#moviesModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
@@ -120,7 +122,7 @@ export default class Presenter {
       containerCards: this.#moviesList.element,
       comments: this.comments,
       bodyContainer: this.#bodyContainer,
-      onDateChange: this.#handlerChangeMovies,
+      onDateChange: this.#handleViewAction,
       onModeChange: this.#handleChangeMode
     });
     this.#cardsMoviesPresentrs.set(movie.id, movieCard);
@@ -163,9 +165,19 @@ export default class Presenter {
     render(this.#numberOfFilms, this.#containerNumberOfFilms);
   }
 
-  #handlerChangeMovies = (updateMovie) => {
-    this.movies = updateItem(this.movies, updateMovie);
-    this.#cardsMoviesPresentrs.get(updateMovie.id).init(updateMovie);
+  #handleViewAction = (actionUser, updateType, update) => {
+    switch(actionUser){
+      case UserAction.UPDATE:
+        this.#moviesModel.updateMovie(updateType, update);
+        break;
+    }
   };
 
+  #handleModelEvent = (updateType, data) => {
+    switch(updateType) {
+      case UpdateType.PATH:
+        this.#cardsMoviesPresentrs.get(data.id).init(data);
+        break;
+    }
+  };
 }

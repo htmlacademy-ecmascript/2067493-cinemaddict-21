@@ -1,6 +1,7 @@
 import PopupContainer from '../view/popup-container.js';
 import PopupMovie from '../view/popup-movie.js';
 import MovieCard from '../view/movie-card.js';
+import { UserAction, UpdateType } from '../const.js';
 import { render, remove, replace } from '../framework/render.js';
 
 const Mode = {
@@ -68,7 +69,7 @@ export default class MovieCardPresenter {
   }
 
   resetView() {
-    if(this.#mode !== Mode.CARD) {
+    if (this.#mode !== Mode.CARD) {
       this.#removePopupMovie();
     }
   }
@@ -106,7 +107,7 @@ export default class MovieCardPresenter {
   }
 
   #handlePopupClick = () => {
-    if(this.#mode === Mode.POPUP) {
+    if (this.#mode === Mode.POPUP) {
       return;
     }
 
@@ -118,33 +119,42 @@ export default class MovieCardPresenter {
   };
 
   #handlerChangeWatchlist = () => {
-    this.#handleDataChange({
-      ...this.#movie, userDetails: {
-        ...this.#movie.userDetails,
-        watchlist: !this.#movie.userDetails.watchlist
-      }
-    });
+    this.#handleDataChange(
+      UserAction.UPDATE,
+      UpdateType.PATH,
+      {
+        ...this.#movie, userDetails: {
+          ...this.#movie.userDetails,
+          watchlist: !this.#movie.userDetails.watchlist
+        }
+      });
   };
 
   #handlerChangeFavorite = () => {
-    this.#handleDataChange({
-      ...this.#movie, userDetails: {
-        ...this.#movie.userDetails,
-        favorite: !this.#movie.userDetails.favorite
-      }
-    });
+    this.#handleDataChange(
+      UserAction.UPDATE,
+      UpdateType.PATH,
+      {
+        ...this.#movie, userDetails: {
+          ...this.#movie.userDetails,
+          favorite: !this.#movie.userDetails.favorite
+        }
+      });
   };
 
   #handlerChangeAlreadyWatched = () => {
-    this.#handleDataChange({
-      ...this.#movie, userDetails: {
-        ...this.#movie.userDetails,
-        alreadyWatched: !this.#movie.userDetails.alreadyWatched,
-        watchingDate: this.#movie.userDetails.watchingDate === null
-          ? this.#movie.userDetails.watchingDate = new Date()
-          : this.#movie.userDetails.watchingDat = null
-      }
-    });
+    this.#handleDataChange(
+      UserAction.UPDATE,
+      UpdateType.PATH,
+      {
+        ...this.#movie, userDetails: {
+          ...this.#movie.userDetails,
+          alreadyWatched: !this.#movie.userDetails.alreadyWatched,
+          watchingDate: this.#movie.userDetails.watchingDate === null
+            ? this.#movie.userDetails.watchingDate = new Date()
+            : this.#movie.userDetails.watchingDat = null
+        }
+      });
   };
 
 }
