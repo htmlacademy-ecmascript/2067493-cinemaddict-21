@@ -29,13 +29,14 @@ export class CommentsModel extends Observable {
   }
 
   addComments(updateType, update) {
-    update.comments = {...update.comments,
+    const newComment = {...update.comment,
       id: nanoid(),
       author: getRandomArrayElement(ACTORS),
       date: new Date()
     };
 
-    this.#comments.get(update.id).push(update.comments);
+    this.#comments.get(update.id).push(newComment);
+
     this._notify(updateType, update);
   }
 

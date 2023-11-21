@@ -7,8 +7,9 @@ export default class PopupMovie extends AbstractStatefulView {
   #handleClickFavorite = null;
   #handleClickWatchlist = null;
   #handleClickDeleteComment = null;
+  #handleKeyDownAddComment = null;
 
-  constructor ({movie, comments, onClickClosePopup, onAlreadyWatched, onFavoriteClick, onWatchlistClick, onClickDeleteComment}) {
+  constructor({ movie, comments, onClickClosePopup, onAlreadyWatched, onFavoriteClick, onWatchlistClick, onClickDeleteComment, onKeyDownAddComment }) {
     super();
     this._setState(PopupMovie.parseMovieToState(movie, comments));
 
@@ -17,6 +18,7 @@ export default class PopupMovie extends AbstractStatefulView {
     this.#handleClickFavorite = onFavoriteClick;
     this.#handleClickWatchlist = onWatchlistClick;
     this.#handleClickDeleteComment = onClickDeleteComment;
+    this.#handleKeyDownAddComment = onKeyDownAddComment;
 
     this._restoreHandlers();
   }
@@ -36,14 +38,25 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('input', this.#inputTextCommentHandler);
     this.element.querySelector('.film-details__comments-list')
       .addEventListener('click', this.#clickDeleteCommentHandler);
+    this.element.querySelector('.film-details__comment-input')
+      .addEventListener('keydown', this.#addCommentKeyDownHandler);
   }
 
-  reset (movie, comments) {
+  reset(movie, comments) {
     this.updateElement(PopupMovie.parseMovieToState(movie, comments));
   }
 
+  #addCommentKeyDownHandler = (evt) => {
+    if (evt.code === 'Enter' && (evt.ctrlKey || evt.metaKey)) {
+      if (this._state.userTextComment !== '' && this._state.userEmoji !== '') {
+        evt.preventDefault();
+        this.#handleKeyDownAddComment(PopupMovie.parseStateToNewComment(this._state));
+      }
+    }
+  };
+
   #clickDeleteCommentHandler = (evt) => {
-    if(evt.target.tagName !== 'BUTTON'){
+    if (evt.target.tagName !== 'BUTTON') {
       return;
     }
 
@@ -93,9 +106,10 @@ export default class PopupMovie extends AbstractStatefulView {
     });
   };
 
-  get template () {
-    return createPopupTemplate({movie: this._state});
+  get template() {
+    return createPopupTemplate({ movie: this._state });
   }
+
 
   static parseMovieToState(movie, comments) {
     return {
@@ -106,8 +120,8 @@ export default class PopupMovie extends AbstractStatefulView {
     };
   }
 
-  static parseStateToMovie (state) {
-    const movie = {...state};
+  static parseStateToMovie(state) {
+    const movie = { ...state };
 
     movie.comments = movie.comments.map((comment) => comment.id);
 
@@ -115,5 +129,17 @@ export default class PopupMovie extends AbstractStatefulView {
     delete movie.userTextComment;
 
     return movie;
+  }
+
+  static parseStateToNewComment(state) {
+    const comment = {
+      id: state.id,
+      comment: {
+        comment: state.userTextComment,
+        emotion: state.userEmoji,
+      }
+    };
+
+    return comment;
   }
 }
