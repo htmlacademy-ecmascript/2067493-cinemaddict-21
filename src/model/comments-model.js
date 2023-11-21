@@ -1,5 +1,8 @@
 import Observable from '../framework/observable.js';
+import { ACTORS } from '../const.js';
 import { comments } from '../moks/comment-moks.js';
+import { nanoid } from 'nanoid';
+import { getRandomArrayElement } from '../utils.js';
 
 export class CommentsModel extends Observable {
   #movies = null;
@@ -23,5 +26,17 @@ export class CommentsModel extends Observable {
     }
 
     return this.#comments;
+  }
+
+  addComments(updateType, update) {
+    update.comments = {...update.comments,
+      id: nanoid(),
+      author: getRandomArrayElement(ACTORS),
+      date: new Date()
+    };
+
+    this.#comments.get(update.id).push(update.comments);
+    console.log(this.#comments.get(update.id));
+    this._notify(updateType, update);
   }
 }

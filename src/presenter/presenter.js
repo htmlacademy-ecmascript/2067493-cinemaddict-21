@@ -26,17 +26,17 @@ export default class Presenter {
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #moviesModel = null;
-  #commentsModel = null;
+  #comments = null;
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
 
-  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel, commentsModel, body }) {
+  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel, body }) {
     this.#containerInfoUser = containerInfoUser;
     this.#contentContainer = contentContainer;
     this.#containerNumberOfFilms = containerNumberOfFilms;
     this.#moviesModel = moviesModel;
 
-    this.#commentsModel = commentsModel;
+    this.#comments = this.#moviesModel.comments;
     this.#bodyContainer = body;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
@@ -64,7 +64,7 @@ export default class Presenter {
   }
 
   get comments() {
-    return this.#commentsModel.comments;
+    return this.#comments;
   }
 
   #renderInfoUser() {
