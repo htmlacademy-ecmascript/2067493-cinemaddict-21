@@ -100,6 +100,7 @@ export default class MovieCardPresenter {
   }
 
   #removePopupMovie() {
+    this.#popupMovie.reset(this.#movie, this.#comments.get(this.#movie.id));
     this.#bodyContainer.classList.remove('hide-overflow');
     remove(this.#popupContainer);
     document.removeEventListener('keydown', this.#escKeyDownHandler);

@@ -34,6 +34,10 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('input', this.#inputTextCommentHandler);
   }
 
+  reset (movie, comments) {
+    this.updateElement(PopupMovie.parseMovieToState(movie, comments));
+  }
+
   #closePopupHandler = (evt) => {
     evt.preventDefault();
     this.#handleClosePopup();
