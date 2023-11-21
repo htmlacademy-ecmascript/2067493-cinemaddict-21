@@ -36,7 +36,14 @@ export class CommentsModel extends Observable {
     };
 
     this.#comments.get(update.id).push(update.comments);
-    console.log(this.#comments.get(update.id));
+    this._notify(updateType, update);
+  }
+
+  deleteComments(updateType, update) {
+    const index = this.#comments.get(update.id).findIndex((item) => item.id === update.comment);
+
+    this.#comments.get(update.id).splice(index, 1);
+
     this._notify(updateType, update);
   }
 }

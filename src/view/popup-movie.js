@@ -6,8 +6,9 @@ export default class PopupMovie extends AbstractStatefulView {
   #handleClickAlreadyWatched = null;
   #handleClickFavorite = null;
   #handleClickWatchlist = null;
+  #handleClickDeleteComment = null;
 
-  constructor ({movie, comments, onClickClosePopup, onAlreadyWatched, onFavoriteClick, onWatchlistClick}) {
+  constructor ({movie, comments, onClickClosePopup, onAlreadyWatched, onFavoriteClick, onWatchlistClick, onClickDeleteComment}) {
     super();
     this._setState(PopupMovie.parseMovieToState(movie, comments));
 
@@ -15,6 +16,7 @@ export default class PopupMovie extends AbstractStatefulView {
     this.#handleClickAlreadyWatched = onAlreadyWatched;
     this.#handleClickFavorite = onFavoriteClick;
     this.#handleClickWatchlist = onWatchlistClick;
+    this.#handleClickDeleteComment = onClickDeleteComment;
 
     this._restoreHandlers();
   }
@@ -32,11 +34,28 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('change', this.#changeEmojiHandler);
     this.element.querySelector('.film-details__comment-input')
       .addEventListener('input', this.#inputTextCommentHandler);
+    this.element.querySelector('.film-details__comments-list')
+      .addEventListener('click', this.#clickDeleteCommentHandler);
   }
 
   reset (movie, comments) {
     this.updateElement(PopupMovie.parseMovieToState(movie, comments));
   }
+
+  #clickDeleteCommentHandler = (evt) => {
+    if(evt.target.tagName !== 'BUTTON'){
+      return;
+    }
+
+    const movie = PopupMovie.parseStateToMovie(this._state);
+    const commentId = movie.comments.find((comment) => comment === evt.target.dataset.commentIdValue);
+    const commentDelete = {
+      id: movie.id,
+      comment: commentId
+    };
+
+    this.#handleClickDeleteComment(commentDelete);
+  };
 
   #closePopupHandler = (evt) => {
     evt.preventDefault();
@@ -85,5 +104,16 @@ export default class PopupMovie extends AbstractStatefulView {
       userTextComment: '',
       comments: [...comments]
     };
+  }
+
+  static parseStateToMovie (state) {
+    const movie = {...state};
+
+    movie.comments = movie.comments.map((comment) => comment.id);
+
+    delete movie.userEmoji;
+    delete movie.userTextComment;
+
+    return movie;
   }
 }

@@ -53,6 +53,7 @@ export default class MovieCardPresenter {
       onWatchlistClick: this.#handlerChangeWatchlist,
       onFavoriteClick: this.#handlerChangeFavorite,
       onAlreadyWatched: this.#handlerChangeAlreadyWatched,
+      onClickDeleteComment: this.#handlerDeletedComment
     });
 
 
@@ -158,4 +159,11 @@ export default class MovieCardPresenter {
       });
   };
 
+  #handlerDeletedComment = (comment) => {
+    this.#handleDataChange(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATH,
+      comment
+    );
+  };
 }

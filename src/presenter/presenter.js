@@ -26,7 +26,7 @@ export default class Presenter {
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #moviesModel = null;
-  #comments = null;
+  #commentsModel = null;
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
 
@@ -36,7 +36,7 @@ export default class Presenter {
     this.#containerNumberOfFilms = containerNumberOfFilms;
     this.#moviesModel = moviesModel;
 
-    this.#comments = this.#moviesModel.comments;
+    this.#commentsModel = this.#moviesModel.commentsModel;
     this.#bodyContainer = body;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
@@ -64,7 +64,7 @@ export default class Presenter {
   }
 
   get comments() {
-    return this.#comments;
+    return this.#commentsModel.comments;
   }
 
   #renderInfoUser() {
@@ -108,7 +108,8 @@ export default class Presenter {
 
     render(this.#moviesList, this.#containerMovies.element);
     this.#renderCards(movies);
-    if(this.#renderedMoviesCount >= moviesCount) {
+
+    if(this.#renderedMoviesCount <= moviesCount) {
       this.#renderShowMoreButton();
     }
   }
@@ -170,6 +171,11 @@ export default class Presenter {
       case UserAction.UPDATE:
         this.#moviesModel.updateMovie(updateType, update);
         break;
+      case UserAction.ADD_COMMENT:
+        this.#commentsModel.addComments(updateType, update);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#commentsModel.deleteComments(updateType, update);
     }
   };
 

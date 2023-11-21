@@ -12,15 +12,15 @@ export default class MoviesModel extends Observable{
     super();
     this.#commentsModel = new CommentsModel({movies: this.movies});
 
-    this.#commentsModel.addObserver(this.#addComments);
+    this.#commentsModel.addObserver(this.#changeComments);
   }
 
   get movies() {
     return this.#movies;
   }
 
-  get comments() {
-    return this.#commentsModel.comments;
+  get commentsModel() {
+    return this.#commentsModel;
   }
 
   updateMovie(updateType, update) {
@@ -35,11 +35,11 @@ export default class MoviesModel extends Observable{
     this._notify(updateType, update);
   }
 
-  #addComments = (updateType, update) => {
+  #changeComments = (updateType, update) => {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
 
-    this.#movies[index].comments.push(update.comments.id);
-
-    this._notify(updateType, update);
+    const comments = this.commentsModel.comments.get(update.id);
+    this.#movies[index].comments = comments.map((comment) => comment.id);
+    this._notify(updateType, this.#movies[index]);
   };
 }
