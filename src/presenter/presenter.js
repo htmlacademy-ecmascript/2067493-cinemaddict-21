@@ -117,7 +117,7 @@ export default class Presenter {
     render(this.#moviesList, this.#containerMovies.element);
     this.#renderCards(movies);
 
-    if(this.#renderedMoviesCount <= moviesCount) {
+    if(this.#renderedMoviesCount < moviesCount) {
       this.#renderShowMoreButton();
     }
   }
