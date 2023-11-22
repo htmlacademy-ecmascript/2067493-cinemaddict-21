@@ -6,8 +6,8 @@ import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
 import MovieCardPresenter from './movie-card-presenter.js';
 import Empty from '../view/empty.js';
-import { diffDate } from '../utils.js';
-import { render, remove } from '../framework/render.js';
+import { diffDate, filters } from '../utils.js';
+import { render, remove} from '../framework/render.js';
 import { SORT_TYPE, UserAction, UpdateType } from '../const.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
@@ -17,8 +17,9 @@ export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
   #numberOfFilms = new NumberOfFilms();
-  #empty = new Empty();
+  #empty = null;
   #cardsMoviesPresentrs = new Map();
+  #filtersModel = null;
   #listSort = null;
   #bodyContainer = null;
   #showMoreButton = null;
@@ -30,37 +31,38 @@ export default class Presenter {
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
 
-  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel, body }) {
+  constructor({ containerInfoUser, contentContainer, containerNumberOfFilms, moviesModel, filtersModel, body }) {
     this.#containerInfoUser = containerInfoUser;
     this.#contentContainer = contentContainer;
     this.#containerNumberOfFilms = containerNumberOfFilms;
     this.#moviesModel = moviesModel;
+    this.#filtersModel = filtersModel;
 
     this.#commentsModel = this.#moviesModel.commentsModel;
     this.#bodyContainer = body;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
     this.#renderInfoUser();
-    this.#renderListSort();
-    this.#renderContainerMovies();
-    this.#renderListMovies();
+    this.#renderBoard();
     this.#renderNumberOfFilms();
   }
 
   get movies() {
+    const filterType = this.#filtersModel.filter;
+    const movies = this.#moviesModel.movies;
+    const filteredMovies = filters[filterType](movies);
     switch (this.#currentSortType) {
       case SORT_TYPE.DATE:
-        [...this.#moviesModel.movies].sort((a, b) => diffDate(a.filmInfo.releas.date, b.filmInfo.releas.date));
-        break;
+        return filteredMovies.sort((a, b) => diffDate(a.filmInfo.releas.date, b.filmInfo.releas.date));
       case SORT_TYPE.RETING:
-        [...this.#moviesModel.movies].sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
-        break;
+        return filteredMovies.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
     }
 
-    return this.#moviesModel.movies;
+    return filteredMovies;
   }
 
   get comments() {
@@ -77,7 +79,7 @@ export default class Presenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearMoviesCard();
+    this.#clearMoviesCard({resetRederendCount: true});
     this.#renderListMovies();
   };
 
@@ -93,11 +95,17 @@ export default class Presenter {
   }
 
   #renderEmpty() {
+    this.#empty = new Empty({typeFilter: this.#filtersModel.filter});
     render(this.#empty, this.#containerMovies.element);
   }
 
-  #renderListMovies() {
+  #renderBoard () {
+    this.#renderListSort();
+    this.#renderContainerMovies();
+    this.#renderListMovies();
+  }
 
+  #renderListMovies() {
     const moviesCount = this.movies.length;
     const movies = this.movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount));
 
@@ -134,10 +142,24 @@ export default class Presenter {
     this.#cardsMoviesPresentrs.forEach((presenter) => presenter.resetView());
   };
 
-  #clearMoviesCard() {
+  #clearMoviesCard({resetSortType = false, resetRederendCount = false} = {}) {
+    const moviesCount = this.movies.length;
     this.#cardsMoviesPresentrs.forEach((presenter) => presenter.destroy());
     this.#cardsMoviesPresentrs.clear();
-    this.#renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+
+    if(resetSortType) {
+      remove(this.#listSort);
+      this.#currentSortType = SORT_TYPE.DEFAULT;
+    }
+
+    if(resetRederendCount){
+      this.#renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+    } else {
+      this.#renderedMoviesCount = Math.min(moviesCount, this.#renderedMoviesCount);
+    }
+
+    remove(this.#empty);
+    remove(this.#moviesList);
     remove(this.#showMoreButton);
   }
 
@@ -183,6 +205,14 @@ export default class Presenter {
     switch(updateType) {
       case UpdateType.PATH:
         this.#cardsMoviesPresentrs.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearMoviesCard();
+        this.#renderListMovies();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
+        this.#renderBoard();
         break;
     }
   };

@@ -124,7 +124,7 @@ export default class MovieCardPresenter {
   #handlerChangeWatchlist = () => {
     this.#handleDataChange(
       UserAction.UPDATE,
-      UpdateType.PATH,
+      UpdateType.MINOR,
       {
         ...this.#movie, userDetails: {
           ...this.#movie.userDetails,
@@ -136,7 +136,7 @@ export default class MovieCardPresenter {
   #handlerChangeFavorite = () => {
     this.#handleDataChange(
       UserAction.UPDATE,
-      UpdateType.PATH,
+      UpdateType.MINOR,
       {
         ...this.#movie, userDetails: {
           ...this.#movie.userDetails,
@@ -148,7 +148,7 @@ export default class MovieCardPresenter {
   #handlerChangeAlreadyWatched = () => {
     this.#handleDataChange(
       UserAction.UPDATE,
-      UpdateType.PATH,
+      UpdateType.MINOR,
       {
         ...this.#movie, userDetails: {
           ...this.#movie.userDetails,

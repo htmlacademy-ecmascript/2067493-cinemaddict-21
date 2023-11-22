@@ -4,7 +4,7 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
 const filters = {
-  [FILTER_TYPE.ALL]: (movies) => movies,
+  [FILTER_TYPE.ALL]: (movies) => [...movies],
   [FILTER_TYPE.WATCHLIST]: (movies) => movies.filter((movie) => movie.userDetails.watchlist),
   [FILTER_TYPE.HISTORY]: (movies) => movies.filter((movie) => movie.userDetails.alreadyWatched),
   [FILTER_TYPE.FAVORITES]: (movies) => movies.filter((movie) => movie.userDetails.favorite)

@@ -1,7 +1,7 @@
 import Presenter from '../src/presenter/presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import MoviesModel from './model/movies-model.js';
-import { generateFilters } from './moks/filter-moks.js';
+import FilterModel from './model/filters-model.js';
 
 const containerInfoUser = document.querySelector('.header');
 const contentContainer = document.querySelector('.main');
@@ -9,15 +9,16 @@ const containerNumberOfFilms = document.querySelector('.footer__statistics');
 const body = document.querySelector('body');
 
 const moviesModel = new MoviesModel ();
-const filters = generateFilters(moviesModel.movies);
+const filtersModel = new FilterModel ();
 
 const filterPresenter = new FilterPresenter ({
-  filters,
+  filtersModel,
+  moviesModel,
   container: contentContainer
 });
 
 const presenter = new Presenter ({containerInfoUser, contentContainer,
-  containerNumberOfFilms, moviesModel, body});
+  containerNumberOfFilms, moviesModel, filtersModel, body});
 
 presenter.init();
 filterPresenter.init();
