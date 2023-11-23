@@ -1,13 +1,19 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createNumberOfFilmsTemplate() {
+function createNumberOfFilmsTemplate(movieCount) {
   return `
-    <p>130 291 movies inside</p>
+    <p>${movieCount} movies inside</p>
   `;
 }
 
 export default class NumberOfFilms extends AbstractView {
+  #moviesCount = null;
+  constructor(movieCount){
+    super();
+    this.#moviesCount = movieCount;
+  }
+
   get template() {
-    return createNumberOfFilmsTemplate();
+    return createNumberOfFilmsTemplate(this.#moviesCount);
   }
 }

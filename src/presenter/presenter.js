@@ -1,5 +1,6 @@
 import InfoUser from '../view/info-user.js';
 import ListSort from '../view/list-sort.js';
+import Loading from '../view/loading.js';
 import ContainerMovies from '../view/container-movies.js';
 import MoviesList from '../view/movies-list.js';
 import NumberOfFilms from '../view/number-of-films.js';
@@ -8,15 +9,15 @@ import MovieCardPresenter from './movie-card-presenter.js';
 import Empty from '../view/empty.js';
 import { diffDate, filters } from '../utils.js';
 import { render, remove} from '../framework/render.js';
-import { SORT_TYPE, UserAction, UpdateType } from '../const.js';
+import { SORT_TYPE, UserAction, UpdateType ,FILTER_TYPE } from '../const.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
 
 export default class Presenter {
-  #infoUser = new InfoUser();
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
-  #numberOfFilms = new NumberOfFilms();
+  #numberOfFilms = null;
+  #infoUser = null;
   #empty = null;
   #cardsMoviesPresentrs = new Map();
   #filtersModel = null;
@@ -28,6 +29,7 @@ export default class Presenter {
   #containerNumberOfFilms = null;
   #moviesModel = null;
   #commentsModel = null;
+  #isLoading = true;
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
 
@@ -65,11 +67,10 @@ export default class Presenter {
     return filteredMovies;
   }
 
-  get comments() {
-    return this.#commentsModel.comments;
-  }
-
   #renderInfoUser() {
+    const movies = this.#moviesModel.movies;
+    const filteredHistoryMoviesCount = filters[FILTER_TYPE.HISTORY](movies).length;
+    this.#infoUser = new InfoUser({historyCount: filteredHistoryMoviesCount});
     render(this.#infoUser, this.#containerInfoUser);
   }
 
@@ -100,6 +101,11 @@ export default class Presenter {
   }
 
   #renderBoard () {
+    if(this.#isLoading){
+      this.#renderContainerMovies();
+      render(new Loading(), this.#containerMovies.element);
+      return;
+    }
     this.#renderListSort();
     this.#renderContainerMovies();
     this.#renderListMovies();
@@ -113,6 +119,7 @@ export default class Presenter {
       this.#renderEmpty();
       return;
     }
+
 
     render(this.#moviesList, this.#containerMovies.element);
     this.#renderCards(movies);
@@ -158,6 +165,7 @@ export default class Presenter {
       this.#renderedMoviesCount = Math.min(moviesCount, this.#renderedMoviesCount);
     }
 
+    remove(this.#containerMovies);
     remove(this.#empty);
     remove(this.#moviesList);
     remove(this.#showMoreButton);
@@ -185,6 +193,8 @@ export default class Presenter {
   };
 
   #renderNumberOfFilms() {
+    const moviesCount = this.#moviesModel.movies.length;
+    this.#numberOfFilms = new NumberOfFilms(moviesCount);
     render(this.#numberOfFilms, this.#containerNumberOfFilms);
   }
 
@@ -215,8 +225,13 @@ export default class Presenter {
         this.#renderBoard();
         break;
       case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#infoUser);
+        remove(this.#numberOfFilms);
         this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
+        this.#renderInfoUser();
         this.#renderBoard();
+        this.#renderNumberOfFilms();
     }
   };
 }
