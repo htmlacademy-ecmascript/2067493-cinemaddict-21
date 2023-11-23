@@ -127,7 +127,8 @@ const EMOJI = ['smile','sleeping','puke','angry'];
 const UpdateType = {
   PATH: 'path',
   MINOR: 'minor',
-  MAJOR: 'major'
+  MAJOR: 'major',
+  INIT: 'INIT'
 };
 
 const UserAction = {

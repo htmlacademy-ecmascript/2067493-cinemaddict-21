@@ -109,6 +109,7 @@ export default class Presenter {
     const moviesCount = this.movies.length;
     const movies = this.movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount));
 
+    console.log(movies);
     if (moviesCount === 0) {
       this.#renderEmpty();
       return;
@@ -129,7 +130,7 @@ export default class Presenter {
   #renderCardMovie = (movie) => {
     const movieCard = new MovieCardPresenter({
       containerCards: this.#moviesList.element,
-      comments: this.comments,
+      commentsModel: this.#commentsModel,
       bodyContainer: this.#bodyContainer,
       onDateChange: this.#handleViewAction,
       onModeChange: this.#handleChangeMode
@@ -214,6 +215,9 @@ export default class Presenter {
         this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
+        this.#renderBoard();
     }
   };
 }

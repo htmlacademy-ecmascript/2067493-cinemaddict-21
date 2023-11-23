@@ -1,50 +1,45 @@
 import Observable from '../framework/observable.js';
-import { ACTORS } from '../const.js';
-import { comments } from '../moks/comment-moks.js';
-import { nanoid } from 'nanoid';
-import { getRandomArrayElement } from '../utils.js';
 
-export class CommentsModel extends Observable {
-  #movies = null;
-  #comments = new Map ();
-  constructor ({movies}) {
+export default class CommentsModel extends Observable {
+  #commentsApiSevice = null;
+
+  constructor ({commentsApiSevice}) {
     super();
-    this.#movies = movies;
+    this.#commentsApiSevice = commentsApiSevice;
   }
 
-  #getCommentsMovie() {
-    this.#movies.forEach((movie) => {
-      const movieCommentsArray = [];
-      movie.comments.forEach((comment) => movieCommentsArray.push(comments.find((commentsItem) => commentsItem.id === comment)));
-      this.#comments.set(movie.id, movieCommentsArray);
-    });
+  async getComments(movieId) {
+    const comments = await this.#commentsApiSevice.getComments(movieId);
+    const adaptComments = this.#adaptComments(comments);
+    return adaptComments;
   }
 
-  get comments() {
-    if(this.#comments.size === 0) {
-      this.#getCommentsMovie();
-    }
+  #adaptComments (comments) {
+    const adaptComments = comments.map((comment) => ({
+      ...comment,
+      date: new Date(comment.date)
+    }));
 
-    return this.#comments;
+    return adaptComments;
   }
 
-  addComments(updateType, update) {
-    const newComment = {...update.comment,
-      id: nanoid(),
-      author: getRandomArrayElement(ACTORS),
-      date: new Date()
-    };
+  // addComments(updateType, update) {
+  //   const newComment = {...update.comment,
+  //     id: nanoid(),
+  //     author: getRandomArrayElement(ACTORS),
+  //     date: new Date()
+  //   };
 
-    this.#comments.get(update.id).push(newComment);
+  //   this.#comments.get(update.id).push(newComment);
 
-    this._notify(updateType, update);
-  }
+  //   this._notify(updateType, update);
+  // }
 
-  deleteComments(updateType, update) {
-    const index = this.#comments.get(update.id).findIndex((item) => item.id === update.comment);
+  // deleteComments(updateType, update) {
+  //   const index = this.#comments.get(update.id).findIndex((item) => item.id === update.comment);
 
-    this.#comments.get(update.id).splice(index, 1);
+  //   this.#comments.get(update.id).splice(index, 1);
 
-    this._notify(updateType, update);
-  }
+  //   this._notify(updateType, update);
+  // }
 }

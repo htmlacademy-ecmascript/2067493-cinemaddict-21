@@ -2,7 +2,7 @@ import { FORMATE_DATE } from '../../../const.js';
 import { getDateFormate, durationMovies } from '../../../utils.js';
 
 function createPopupDetailsFilm ({filmInfo, userDetails}) {
-  const {title, alternativeTitle, totalRating, director, writers, actors, releas, duration, description, genre, poster, ageRating } = filmInfo;
+  const {title, alternativeTitle, totalRating, director, writers, actors, release, duration, description, genre, poster, ageRating } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
   const classActive = 'film-details__control-button--active';
 
@@ -47,7 +47,7 @@ function createPopupDetailsFilm ({filmInfo, userDetails}) {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${getDateFormate(releas.date, FORMATE_DATE.releasDatePopup)}</td>
+            <td class="film-details__cell">${getDateFormate(release.date, FORMATE_DATE.releasDatePopup)}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Duration</td>
@@ -55,7 +55,7 @@ function createPopupDetailsFilm ({filmInfo, userDetails}) {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
-            <td class="film-details__cell">${releas.releaseCountry}</td>
+            <td class="film-details__cell">${release.releaseCountry}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">${genre.length > 1 ? 'Genres' : 'Genre'}</td>

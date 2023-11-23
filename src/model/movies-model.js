@@ -1,16 +1,15 @@
-import { createMovie } from '../moks/movies-moks.js';
-import { CommentsModel } from './comments-model.js';
+import CommentsModel from './comments-model.js';
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
 
-const MOVIES_COUNT = 23;
-
-export default class MoviesModel extends Observable{
-  #movies = Array.from({length: MOVIES_COUNT}, createMovie);
+export default class MoviesModel extends Observable {
+  #movies = [];
   #commentsModel = null;
-
-  constructor() {
+  #moviesApiService = null;
+  constructor({ moviesApiService, commentsApiSevice }) {
     super();
-    this.#commentsModel = new CommentsModel({movies: this.movies});
+    this.#commentsModel = new CommentsModel({commentsApiSevice });
+    this.#moviesApiService = moviesApiService;
 
     this.#commentsModel.addObserver(this.#changeComments);
   }
@@ -21,6 +20,70 @@ export default class MoviesModel extends Observable{
 
   get commentsModel() {
     return this.#commentsModel;
+  }
+
+  async init() {
+    try {
+      const movies = await this.#moviesApiService.movies;
+      this.#movies = movies.map(this.#adaptMovies);
+    } catch {
+      this.#movies = [];
+    }
+    this._notify(UpdateType.INIT);
+  }
+
+  #adaptMovies(movie) {
+    const adaptReleas = (releasInfoFilm) => {
+      const releas = {
+        ...releasInfoFilm,
+        date: new Date(releasInfoFilm['date']),
+        releaseCountry: releasInfoFilm['release_country']
+      };
+
+      delete releas['release_country'];
+
+      return releas;
+    };
+
+    const adaptFilmsInfo = (infoFilms) => {
+      const filmsInfo = {
+        ...infoFilms,
+        alternativeTitle: infoFilms['alternative_title'],
+        ageRating: infoFilms['age_rating'],
+        totalRating: infoFilms['total_rating'],
+        release: adaptReleas(infoFilms.release),
+      };
+
+      delete filmsInfo['alternative_title'];
+      delete filmsInfo['age_rating'];
+      delete filmsInfo['total_rating'];
+
+      return filmsInfo;
+    };
+
+    const adaptUserDetails = (userDetailAdapt) => {
+      const userDetails = {
+        ...userDetailAdapt,
+        alreadyWatched: userDetailAdapt['already_watched'],
+        watchingDate: userDetailAdapt['watching_date'] === null ? null : new Date(userDetailAdapt['watching_date']),
+      };
+
+      delete userDetails['watching_date'];
+      delete userDetails['already_watched'];
+
+      return userDetails;
+    };
+
+    const adaptMovies = {
+      ...movie,
+      filmInfo: adaptFilmsInfo(movie['film_info']),
+      userDetails: adaptUserDetails(movie['user_details'])
+    };
+
+    delete adaptMovies['film_info'];
+    delete adaptMovies['user_details'];
+
+    return adaptMovies;
   }
 
   updateMovie(updateType, update) {
