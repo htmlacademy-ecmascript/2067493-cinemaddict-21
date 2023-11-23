@@ -81,6 +81,7 @@ export default class Presenter {
 
     this.#currentSortType = sortType;
     this.#clearMoviesCard({resetRederendCount: true});
+    this.#renderContainerMovies();
     this.#renderListMovies();
   };
 
@@ -198,10 +199,14 @@ export default class Presenter {
     render(this.#numberOfFilms, this.#containerNumberOfFilms);
   }
 
-  #handleViewAction = (actionUser, updateType, update) => {
+  #handleViewAction = async (actionUser, updateType, update) => {
     switch(actionUser){
       case UserAction.UPDATE:
-        this.#moviesModel.updateMovie(updateType, update);
+        try{
+          await this.#moviesModel.updateMovie(updateType, update);
+        } catch {
+          console.log('ошибка');
+        }
         break;
       case UserAction.ADD_COMMENT:
         this.#commentsModel.addComments(updateType, update);
@@ -218,6 +223,9 @@ export default class Presenter {
         break;
       case UpdateType.MINOR:
         this.#clearMoviesCard();
+        remove(this.#infoUser);
+        this.#renderInfoUser();
+        this.#renderContainerMovies();
         this.#renderListMovies();
         break;
       case UpdateType.MAJOR:

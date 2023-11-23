@@ -86,15 +86,22 @@ export default class MoviesModel extends Observable {
     return adaptMovies;
   }
 
-  updateMovie(updateType, update) {
+  async updateMovie(updateType, update) {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
+    try{
+      const response = await this.#moviesApiService.updateMovies(update);
+      const updateMovies = this.#adaptMovies(response);
 
-    this.#movies = [
-      ...this.#movies.slice(0, index),
-      update,
-      ...this.#movies.slice(index + 1)
-    ];
+      this.#movies = [
+        ...this.#movies.slice(0, index),
+        updateMovies,
+        ...this.#movies.slice(index + 1)
+      ];
+      this._notify(updateType, update);
 
+    } catch {
+      throw new Error('Can\'t update movies');
+    }
     this._notify(updateType, update);
   }
 
