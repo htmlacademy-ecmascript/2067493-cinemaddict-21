@@ -57,7 +57,7 @@ export default class Presenter {
     const filteredMovies = filters[filterType](movies);
     switch (this.#currentSortType) {
       case SORT_TYPE.DATE:
-        return filteredMovies.sort((a, b) => diffDate(a.filmInfo.releas.date, b.filmInfo.releas.date));
+        return filteredMovies.sort((a, b) => diffDate(a.filmInfo.release.date, b.filmInfo.release.date));
       case SORT_TYPE.RETING:
         return filteredMovies.sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
     }
@@ -109,7 +109,6 @@ export default class Presenter {
     const moviesCount = this.movies.length;
     const movies = this.movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount));
 
-    console.log(movies);
     if (moviesCount === 0) {
       this.#renderEmpty();
       return;
