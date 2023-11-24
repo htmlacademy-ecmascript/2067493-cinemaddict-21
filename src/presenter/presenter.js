@@ -7,12 +7,16 @@ import NumberOfFilms from '../view/number-of-films.js';
 import ShowMoreButton from '../view/show-more-button.js';
 import MovieCardPresenter from './movie-card-presenter.js';
 import Empty from '../view/empty.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { diffDate, filters } from '../utils.js';
 import { render, remove} from '../framework/render.js';
 import { SORT_TYPE, UserAction, UpdateType ,FILTER_TYPE } from '../const.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
-
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 5000,
+};
 export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
@@ -28,6 +32,11 @@ export default class Presenter {
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #moviesModel = null;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
+
   #isLoading = true;
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
@@ -198,6 +207,8 @@ export default class Presenter {
   }
 
   #handleViewAction = async (actionUser, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch(actionUser){
       case UserAction.UPDATE:
         this.#cardsMoviesPresentrs.get(update.id).setDisable();
@@ -223,6 +234,8 @@ export default class Presenter {
           this.#cardsMoviesPresentrs.get(update.movie.id).setErrorDeleteComment(update.comment);
         }
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
