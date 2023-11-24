@@ -28,7 +28,6 @@ export default class Presenter {
   #contentContainer = null;
   #containerNumberOfFilms = null;
   #moviesModel = null;
-  #commentsModel = null;
   #isLoading = true;
   #renderedMoviesCount = MOVIES_COUNT_PER_STEP;
   #currentSortType = SORT_TYPE.DEFAULT;
@@ -40,7 +39,6 @@ export default class Presenter {
     this.#moviesModel = moviesModel;
     this.#filtersModel = filtersModel;
 
-    this.#commentsModel = this.#moviesModel.commentsModel;
     this.#bodyContainer = body;
 
     this.#moviesModel.addObserver(this.#handleModelEvent);
@@ -137,7 +135,7 @@ export default class Presenter {
   #renderCardMovie = (movie) => {
     const movieCard = new MovieCardPresenter({
       containerCards: this.#moviesList.element,
-      commentsModel: this.#commentsModel,
+      moviesModel: this.#moviesModel,
       bodyContainer: this.#bodyContainer,
       onDateChange: this.#handleViewAction,
       onModeChange: this.#handleChangeMode
@@ -209,16 +207,25 @@ export default class Presenter {
         }
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentsModel.addComments(updateType, update);
+        try {
+          this.#moviesModel.addComment(updateType, update);
+        } catch {
+          console.log('ошибка');
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComments(updateType, update);
+        try{
+          this.#moviesModel.deleteComments(updateType, update, actionUser);
+        } catch {
+          console.log('ошибка');
+        }
     }
   };
 
   #handleModelEvent = (updateType, data) => {
     switch(updateType) {
       case UpdateType.PATH:
+        console.log(data);
         this.#cardsMoviesPresentrs.get(data.id).init(data);
         break;
       case UpdateType.MINOR:

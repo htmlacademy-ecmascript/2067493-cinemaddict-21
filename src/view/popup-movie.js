@@ -42,10 +42,6 @@ export default class PopupMovie extends AbstractStatefulView {
       .addEventListener('keydown', this.#addCommentKeyDownHandler);
   }
 
-  reset(movie, comments) {
-    this.updateElement(PopupMovie.parseMovieToState(movie, comments));
-  }
-
   #addCommentKeyDownHandler = (evt) => {
     if (evt.code === 'Enter' && (evt.ctrlKey || evt.metaKey)) {
       if (this._state.userTextComment !== '' && this._state.userEmoji !== '') {
@@ -63,7 +59,7 @@ export default class PopupMovie extends AbstractStatefulView {
     const movie = PopupMovie.parseStateToMovie(this._state);
     const commentId = movie.comments.find((comment) => comment === evt.target.dataset.commentIdValue);
     const commentDelete = {
-      id: movie.id,
+      movie,
       comment: commentId
     };
 

@@ -1,25 +1,24 @@
-import CommentsModel from './comments-model.js';
 import Observable from '../framework/observable.js';
-import { UpdateType } from '../const.js';
+import { UpdateType} from '../const.js';
 
 export default class MoviesModel extends Observable {
   #movies = [];
-  #commentsModel = null;
+  #commentsApiSevice = null;
   #moviesApiService = null;
   constructor({ moviesApiService, commentsApiSevice }) {
     super();
-    this.#commentsModel = new CommentsModel({commentsApiSevice });
+    this.#commentsApiSevice = commentsApiSevice;
     this.#moviesApiService = moviesApiService;
-
-    this.#commentsModel.addObserver(this.#changeComments);
   }
 
   get movies() {
     return this.#movies;
   }
 
-  get commentsModel() {
-    return this.#commentsModel;
+  async getComments(movieId) {
+    const comments = await this.#commentsApiSevice.getComments(movieId);
+    const adaptComments = this.#adaptComments(comments);
+    return adaptComments;
   }
 
   async init() {
@@ -88,28 +87,54 @@ export default class MoviesModel extends Observable {
 
   async updateMovie(updateType, update) {
     const index = this.#movies.findIndex((movie) => movie.id === update.id);
-    try{
+    try {
       const response = await this.#moviesApiService.updateMovies(update);
-      const updateMovies = this.#adaptMovies(response);
+      const updateMovie = this.#adaptMovies(response);
 
       this.#movies = [
         ...this.#movies.slice(0, index),
-        updateMovies,
+        updateMovie,
         ...this.#movies.slice(index + 1)
       ];
       this._notify(updateType, update);
-
     } catch {
       throw new Error('Can\'t update movies');
     }
     this._notify(updateType, update);
   }
 
-  #changeComments = (updateType, update) => {
-    const index = this.#movies.findIndex((movie) => movie.id === update.id);
+  #adaptComments(comments) {
+    const adaptComments = comments.map((comment) => ({
+      ...comment,
+      date: new Date(comment.date)
+    }));
 
-    const comments = this.commentsModel.comments.get(update.id);
-    this.#movies[index].comments = comments.map((comment) => comment.id);
-    this._notify(updateType, this.#movies[index]);
-  };
+    return adaptComments;
+  }
+
+  async addComment(updateType, update) {
+    const index = this.#movies.findIndex((movie) => movie.id === update.id);
+    try {
+      const response = await this.#commentsApiSevice.addComment(update);
+      const updateMovie = this.#adaptMovies(response.movie);
+      this.#movies = [
+        ...this.#movies.slice(0, index),
+        updateMovie,
+        ...this.#movies.slice(index + 1)
+      ];
+      this._notify(updateType, updateMovie);
+    } catch {
+      throw new Error('Can\'t add comment');
+    }
+  }
+
+  async deleteComments(updateType, update) {
+    try {
+      console.log(update.movie);
+      await this.#commentsApiSevice.deleteComment(update);
+      this._notify(updateType, update.movie);
+    } catch {
+      throw new Error('Can\'t delete comments');
+    }
+  }
 }

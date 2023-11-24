@@ -16,7 +16,7 @@ export default class MovieCardPresenter {
   #movieCard = null;
   #popupMovie = null;
 
-  #commentsModel = null;
+  #moviesModel = null;
   #movie = null;
 
   #handleDataChange = null;
@@ -24,19 +24,17 @@ export default class MovieCardPresenter {
 
   #mode = Mode.CARD;
 
-  constructor({ containerCards, commentsModel, bodyContainer, onDateChange, onModeChange }) {
+  constructor({ containerCards, moviesModel, bodyContainer, onDateChange, onModeChange}) {
     this.#containerCards = containerCards.querySelector('.films-list__container');
-    this.#commentsModel = commentsModel;
+    this.#moviesModel = moviesModel;
     this.#bodyContainer = bodyContainer;
     this.#handleDataChange = onDateChange;
     this.#handleModeChange = onModeChange;
   }
 
-  init(movie) {
+  async init(movie) {
     this.#movie = movie;
-
     const prevCardMovie = this.#movieCard;
-    const prevPopupMovie = this.#popupMovie;
 
     this.#movieCard = new MovieCard({
       movie: this.#movie,
@@ -46,7 +44,7 @@ export default class MovieCardPresenter {
       onAlreadyWatched: this.#handlerChangeAlreadyWatched,
     });
 
-    if (prevCardMovie === null && prevPopupMovie === null) {
+    if (prevCardMovie === null) {
       render(this.#movieCard, this.#containerCards);
       return;
     }
@@ -54,7 +52,7 @@ export default class MovieCardPresenter {
     replace(this.#movieCard, prevCardMovie);
 
     if (this.#mode === Mode.POPUP) {
-      replace(this.#popupMovie, prevPopupMovie);
+      await this.#renderPopupMovie();
     }
   }
 
@@ -80,7 +78,9 @@ export default class MovieCardPresenter {
     render(this.#popupContainer, this.#bodyContainer);
   }
 
-  #renderPopupMovie(comments) {
+  async #renderPopupMovie() {
+    const comments = await this.#moviesModel.getComments(this.#movie.id);
+    const prevPopupMovie = this.#popupMovie;
     this.#popupMovie = new PopupMovie({
       movie: this.#movie,
       comments: comments,
@@ -91,6 +91,12 @@ export default class MovieCardPresenter {
       onClickDeleteComment: this.#handlerDeletedComment,
       onKeyDownAddComment: this.#handelrAddCommentsKeyDown
     });
+
+    if (this.#mode === Mode.POPUP) {
+      replace(this.#popupMovie, prevPopupMovie);
+      return;
+    }
+
     this.#bodyContainer.classList.add('hide-overflow');
     this.#renderPopupContainer();
     render(this.#popupMovie, this.#popupContainer.element);
@@ -100,7 +106,6 @@ export default class MovieCardPresenter {
   }
 
   #removePopupMovie() {
-    // this.#popupMovie.reset(this.#movie, this.#comments.get(this.#movie.id));
     this.#bodyContainer.classList.remove('hide-overflow');
     remove(this.#popupContainer);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
@@ -108,11 +113,10 @@ export default class MovieCardPresenter {
   }
 
   #handlePopupClick = async () => {
-    const comments = await this.#commentsModel.getComments(this.#movie.id);
     if (this.#mode === Mode.POPUP) {
       return;
     }
-    this.#renderPopupMovie(comments);
+    await this.#renderPopupMovie();
   };
 
   #handleClosePopupClick = () => {
