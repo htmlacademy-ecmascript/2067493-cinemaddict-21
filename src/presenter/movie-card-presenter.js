@@ -24,7 +24,7 @@ export default class MovieCardPresenter {
 
   #mode = Mode.CARD;
 
-  constructor({ containerCards, moviesModel, bodyContainer, onDateChange, onModeChange}) {
+  constructor({ containerCards, moviesModel, bodyContainer, onDateChange, onModeChange }) {
     this.#containerCards = containerCards.querySelector('.films-list__container');
     this.#moviesModel = moviesModel;
     this.#bodyContainer = bodyContainer;
@@ -65,6 +65,27 @@ export default class MovieCardPresenter {
   destroy() {
     remove(this.#movieCard);
     remove(this.#popupMovie);
+  }
+
+  setDisable() {
+    this.#movieCard.updateElement({
+      isDisable: true,
+    });
+    if(this.#mode === Mode.POPUP) {
+      this.#popupMovie.updateElement({
+        isDisable: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    this.#popupMovie.updateElement({
+      isDisable: true,
+      isDeleting: true,
+    });
+    this.#movieCard.updateElement({
+      isDisable: true,
+    });
   }
 
   #escKeyDownHandler = (evt) => {

@@ -15,6 +15,10 @@ export default class MovieCard extends AbstractStatefulView {
     this.#handleClickFavorite = onFavoriteClick;
     this.#handleClickWatchlist = onWatchlistClick;
 
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.addEventListener('click', this.#popupClickHandler);
     this.element.querySelector('.film-card__controls-item--add-to-watchlist')
       .addEventListener('click', this.#clickWatchlistHandler);

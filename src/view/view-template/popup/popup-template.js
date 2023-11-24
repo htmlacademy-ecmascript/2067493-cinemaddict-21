@@ -6,6 +6,7 @@ import { EMOJI } from '../../../const.js';
 
 function createPopupTemplate ({movie}) {
   const commentsFilm = movie.comments;
+
   return `
   <div class="film-details__inner">
     ${createPopupDetailsFilm(movie)}
@@ -18,10 +19,10 @@ function createPopupTemplate ({movie}) {
           ${commentsFilm.map((comment) => createPopupCommentFilm(comment, movie)).join(' ')}
         </ul>
 
-        <form class="film-details__new-comment" action="" method="get" ${movie.isDisable ? 'disabled' : ''}>
-          ${createNewComment(movie.userTextComment, movie.userEmoji)}
+        <form class="film-details__new-comment" action="" method="get" >
+          ${createNewComment(movie.userTextComment, movie.userEmoji, movie.isDisable)}
           <div class="film-details__emoji-list">
-            ${createPopupEmojiTemplate({EMOJI, movie})}
+            ${createPopupEmojiTemplate(EMOJI, movie.userEmoji, movie.isDisable)}
           </div>
         </form>
       </section>

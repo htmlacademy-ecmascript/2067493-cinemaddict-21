@@ -201,13 +201,15 @@ export default class Presenter {
     switch(actionUser){
       case UserAction.UPDATE:
         try{
-          await this.#moviesModel.updateMovie(updateType, update);
+          this.#cardsMoviesPresentrs.get(update.id).setDisable();
+          this.#moviesModel.updateMovie(updateType, update);
         } catch {
           console.log('ошибка');
         }
         break;
       case UserAction.ADD_COMMENT:
         try {
+          this.#cardsMoviesPresentrs.get(update.id).setDisable();
           this.#moviesModel.addComment(updateType, update);
         } catch {
           console.log('ошибка');
@@ -215,6 +217,7 @@ export default class Presenter {
         break;
       case UserAction.DELETE_COMMENT:
         try{
+          this.#cardsMoviesPresentrs.get(update.movie.id).setDeleting();
           this.#moviesModel.deleteComments(updateType, update, actionUser);
         } catch {
           console.log('ошибка');
@@ -225,7 +228,6 @@ export default class Presenter {
   #handleModelEvent = (updateType, data) => {
     switch(updateType) {
       case UpdateType.PATH:
-        console.log(data);
         this.#cardsMoviesPresentrs.get(data.id).init(data);
         break;
       case UpdateType.MINOR:

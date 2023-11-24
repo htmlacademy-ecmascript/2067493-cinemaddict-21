@@ -1,6 +1,6 @@
 import he from 'he';
 
-function createNewComment(comment, emoji) {
+function createNewComment(comment, emoji, isDisable) {
   return `
       <div class="film-details__add-emoji-label">
         ${emoji ?
@@ -9,7 +9,7 @@ function createNewComment(comment, emoji) {
       </div>
 
       <label class="film-details__comment-label">
-        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(comment)}</textarea>
+        <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisable ? 'disabled' : ''}>${he.encode(comment)}</textarea>
       </label>
 
   `;
