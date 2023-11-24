@@ -25,7 +25,7 @@ export default class MoviesModel extends Observable {
     try {
       const movies = await this.#moviesApiService.movies;
       this.#movies = movies.map(this.#adaptMovies);
-    } catch {
+    } catch (err) {
       this.#movies = [];
     }
     this._notify(UpdateType.INIT);
@@ -97,7 +97,7 @@ export default class MoviesModel extends Observable {
         ...this.#movies.slice(index + 1)
       ];
       this._notify(updateType, update);
-    } catch {
+    } catch (err){
       throw new Error('Can\'t update movies');
     }
     this._notify(updateType, update);
@@ -123,17 +123,16 @@ export default class MoviesModel extends Observable {
         ...this.#movies.slice(index + 1)
       ];
       this._notify(updateType, updateMovie);
-    } catch {
+    } catch (err) {
       throw new Error('Can\'t add comment');
     }
   }
 
   async deleteComments(updateType, update) {
     try {
-      console.log(update.movie);
       await this.#commentsApiSevice.deleteComment(update);
       this._notify(updateType, update.movie);
-    } catch {
+    } catch (err) {
       throw new Error('Can\'t delete comments');
     }
   }

@@ -3,6 +3,7 @@ import PopupMovie from '../view/popup-movie.js';
 import MovieCard from '../view/movie-card.js';
 import { UserAction, UpdateType } from '../const.js';
 import { render, remove, replace } from '../framework/render.js';
+import { shake } from '../utils.js';
 
 const Mode = {
   CARD: 'CARD',
@@ -65,6 +66,39 @@ export default class MovieCardPresenter {
   destroy() {
     remove(this.#movieCard);
     remove(this.#popupMovie);
+  }
+
+  setErrorUpdate(){
+    if(this.#mode === Mode.CARD){
+      this.#movieCard.updateElement({
+        isDisable: false,
+      });
+      this.#movieCard.shake();
+      return;
+    }
+
+    this.#popupMovie.updateElement({
+      isDisable: false,
+    });
+    const element = this.#popupMovie.element.querySelector('.film-details__controls');
+    shake(element);
+  }
+
+  setErrorAddComment(){
+    this.#popupMovie.updateElement({
+      isDisable: false,
+    });
+    const element = this.#popupMovie.element.querySelector('.film-details__new-comment');
+    shake(element);
+  }
+
+  setErrorDeleteComment(commentId) {
+    this.#popupMovie.updateElement({
+      isDisable: false,
+      isDeleting: false,
+    });
+    const element = this.#popupMovie.element.querySelector(`#${commentId}`);
+    shake(element);
   }
 
   setDisable() {

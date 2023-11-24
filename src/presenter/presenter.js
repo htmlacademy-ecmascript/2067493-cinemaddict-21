@@ -200,27 +200,27 @@ export default class Presenter {
   #handleViewAction = async (actionUser, updateType, update) => {
     switch(actionUser){
       case UserAction.UPDATE:
+        this.#cardsMoviesPresentrs.get(update.id).setDisable();
         try{
-          this.#cardsMoviesPresentrs.get(update.id).setDisable();
-          this.#moviesModel.updateMovie(updateType, update);
-        } catch {
-          console.log('ошибка');
+          await this.#moviesModel.updateMovie(updateType, update);
+        } catch (err){
+          this.#cardsMoviesPresentrs.get(update.id).setErrorUpdate();
         }
         break;
       case UserAction.ADD_COMMENT:
+        this.#cardsMoviesPresentrs.get(update.id).setDisable();
         try {
-          this.#cardsMoviesPresentrs.get(update.id).setDisable();
-          this.#moviesModel.addComment(updateType, update);
-        } catch {
-          console.log('ошибка');
+          await this.#moviesModel.addComment(updateType, update);
+        } catch (err) {
+          this.#cardsMoviesPresentrs.get(update.id).setErrorAddComment();
         }
         break;
       case UserAction.DELETE_COMMENT:
+        this.#cardsMoviesPresentrs.get(update.movie.id).setDeleting();
         try{
-          this.#cardsMoviesPresentrs.get(update.movie.id).setDeleting();
-          this.#moviesModel.deleteComments(updateType, update, actionUser);
-        } catch {
-          console.log('ошибка');
+          await this.#moviesModel.deleteComments(updateType, update, actionUser);
+        } catch (err) {
+          this.#cardsMoviesPresentrs.get(update.movie.id).setErrorDeleteComment(update.comment);
         }
     }
   };

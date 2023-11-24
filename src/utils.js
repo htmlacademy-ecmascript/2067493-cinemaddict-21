@@ -17,4 +17,12 @@ const getDateFormate = (date, dateFormate) => dayjs(date).format(dateFormate);
 const durationMovies = (minute, format) => dayjs.duration(SECOND_PER_MINUTE * minute * MILISECOND_PER_SECOND).format(format);
 
 const diffDate = (dateA, dateB) => dayjs(dateB).diff(dayjs(dateA));
-export { diffDate, filters, getDateFormate, durationMovies};
+const shake = (element) => {
+  const SHAKE_ANIMATION_TIMEOUT = 600;
+  const SHAKE_CLASS_NAME = 'shake';
+  element.classList.add(SHAKE_CLASS_NAME);
+  setTimeout(() => {
+    element.classList.remove(SHAKE_CLASS_NAME);
+  }, SHAKE_ANIMATION_TIMEOUT);
+};
+export { diffDate, filters, getDateFormate, durationMovies, shake};

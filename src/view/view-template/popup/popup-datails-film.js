@@ -17,7 +17,7 @@ function createPopupDetailsFilm ({filmInfo, userDetails, isDisable}) {
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${poster}" alt="">
 
-        <p class="film-details__age">${ageRating}</p>
+        <p class="film-details__age">${ageRating}+</p>
       </div>
 
       <div class="film-details__info">
