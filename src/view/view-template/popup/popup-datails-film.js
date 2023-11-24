@@ -1,7 +1,7 @@
 import { FORMATE_DATE } from '../../../const.js';
 import { getDateFormate, durationMovies } from '../../../utils.js';
 
-function createPopupDetailsFilm ({filmInfo, userDetails}) {
+function createPopupDetailsFilm ({filmInfo, userDetails, isDisable}) {
   const {title, alternativeTitle, totalRating, director, writers, actors, release, duration, description, genre, poster, ageRating } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
   const classActive = 'film-details__control-button--active';
@@ -71,9 +71,9 @@ function createPopupDetailsFilm ({filmInfo, userDetails}) {
     </div>
 
     <section class="film-details__controls">
-      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist ? classActive : '' }" id="watchlist" name="watchlist">Add to watchlist</button>
-      <button type="button" class="film-details__control-button film-details__control-button--watched ${ alreadyWatched ? classActive : ''}" id="watched" name="watched">Already watched</button>
-      <button type="button" class="film-details__control-button film-details__control-button--favorite ${ favorite ? classActive : ''}" id="favorite" name="favorite">Add to favorites</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist ? classActive : '' }" id="watchlist" name="watchlist" ${isDisable ? 'disabled' : ''}>Add to watchlist</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watched ${ alreadyWatched ? classActive : ''}" id="watched" name="watched" ${isDisable ? 'disabled' : ''}>Already watched</button>
+      <button type="button" class="film-details__control-button film-details__control-button--favorite ${ favorite ? classActive : ''}" id="favorite" name="favorite" ${isDisable ? 'disabled' : ''}>Add to favorites</button>
     </section>
   </div>
   `;

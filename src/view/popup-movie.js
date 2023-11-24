@@ -112,7 +112,9 @@ export default class PopupMovie extends AbstractStatefulView {
       ...movie,
       userEmoji: '',
       userTextComment: '',
-      comments: [...comments]
+      comments: [...comments],
+      isDisable: false,
+      isDeleting: false,
     };
   }
 

@@ -1,8 +1,7 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createMovieCardTemplate } from './view-template/movie-card-template.js';
 
-export default class MovieCard extends AbstractView {
-  #movie = [];
+export default class MovieCard extends AbstractStatefulView {
   #handlePopupClick = null;
   #handleClickAlreadyWatched = null;
   #handleClickFavorite = null;
@@ -10,7 +9,7 @@ export default class MovieCard extends AbstractView {
 
   constructor ({movie, onPopupClick, onAlreadyWatched, onFavoriteClick, onWatchlistClick}) {
     super();
-    this.#movie = movie;
+    this._setState(MovieCard.parseMovieToState(movie));
     this.#handlePopupClick = onPopupClick;
     this.#handleClickAlreadyWatched = onAlreadyWatched;
     this.#handleClickFavorite = onFavoriteClick;
@@ -26,7 +25,7 @@ export default class MovieCard extends AbstractView {
   }
 
   get template() {
-    return createMovieCardTemplate(this.#movie);
+    return createMovieCardTemplate(this._state);
   }
 
   #popupClickHandler = (evt) => {
@@ -53,4 +52,11 @@ export default class MovieCard extends AbstractView {
     evt.preventDefault();
     this.#handleClickWatchlist();
   };
+
+  static parseMovieToState(movie) {
+    return {
+      ...movie,
+      isDisable: false,
+    };
+  }
 }

@@ -15,13 +15,13 @@ function createPopupTemplate ({movie}) {
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsFilm.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          ${commentsFilm.map(createPopupCommentFilm).join(' ')}
+          ${commentsFilm.map((comment) => createPopupCommentFilm(comment, movie)).join(' ')}
         </ul>
 
-        <form class="film-details__new-comment" action="" method="get">
+        <form class="film-details__new-comment" action="" method="get" ${movie.isDisable ? 'disabled' : ''}>
           ${createNewComment(movie.userTextComment, movie.userEmoji)}
           <div class="film-details__emoji-list">
-            ${createPopupEmojiTemplate(EMOJI, movie.userEmoji)}
+            ${createPopupEmojiTemplate({EMOJI, movie})}
           </div>
         </form>
       </section>

@@ -1,7 +1,7 @@
 import { getDateFormate, durationMovies } from '../../utils.js';
 import { FORMATE_DATE } from '../../const.js';
 const LENGTH_DESCRIPTION_STEP = 140;
-function createMovieCardTemplate({filmInfo, comments, userDetails}) {
+function createMovieCardTemplate({filmInfo, comments, userDetails, isDisable}) {
   const {title, totalRating, release, duration, description, genre, poster } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
   const classActive = 'film-card__controls-item--active';
@@ -21,9 +21,9 @@ function createMovieCardTemplate({filmInfo, comments, userDetails}) {
       <span class="film-card__comments">${comments.length} comments</span>
     </a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist ? classActive : '' }" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${ alreadyWatched ? classActive : ''}" type="button">Mark as watched</button>
-      <button class="film-card__controls-item film-card__controls-item--favorite ${ favorite ? classActive : ''}" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist ? classActive : '' }" type="button" ${isDisable ? 'disabled' : ''}>Add to watchlist</button>
+      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${ alreadyWatched ? classActive : ''}" type="button" ${isDisable ? 'disabled' : ''}>Mark as watched</button>
+      <button class="film-card__controls-item film-card__controls-item--favorite ${ favorite ? classActive : ''}" type="button" ${isDisable ? 'disabled' : ''}>Mark as favorite</button>
     </div>
   </article>
  `;
