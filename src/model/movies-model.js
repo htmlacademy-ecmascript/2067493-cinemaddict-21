@@ -86,9 +86,9 @@ export default class MoviesModel extends Observable {
   }
 
   async updateMovie(updateType, update) {
-    const index = this.#movies.findIndex((movie) => movie.id === update.id);
     try {
-      const response = await this.#moviesApiService.updateMovies(update);
+      const index = this.#movies.findIndex((movie) => movie.id === update.movie.id);
+      const response = await this.#moviesApiService.updateMovies(update.movie);
       const updateMovie = this.#adaptMovies(response);
 
       this.#movies = [
@@ -100,7 +100,6 @@ export default class MoviesModel extends Observable {
     } catch (err){
       throw new Error('Can\'t update movies');
     }
-    this._notify(updateType, update);
   }
 
   #adaptComments(comments) {
@@ -113,8 +112,8 @@ export default class MoviesModel extends Observable {
   }
 
   async addComment(updateType, update) {
-    const index = this.#movies.findIndex((movie) => movie.id === update.id);
     try {
+      const index = this.#movies.findIndex((movie) => movie.id === update.id);
       const response = await this.#commentsApiSevice.addComment(update);
       const updateMovie = this.#adaptMovies(response.movie);
       this.#movies = [

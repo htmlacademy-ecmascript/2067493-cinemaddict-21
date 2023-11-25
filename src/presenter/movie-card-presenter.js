@@ -53,7 +53,7 @@ export default class MovieCardPresenter {
     replace(this.#movieCard, prevCardMovie);
 
     if (this.#mode === Mode.POPUP) {
-      await this.#renderPopupMovie();
+      await this.renderPopupMovie(this.#movie);
     }
   }
 
@@ -65,11 +65,11 @@ export default class MovieCardPresenter {
 
   destroy() {
     remove(this.#movieCard);
-    remove(this.#popupMovie);
+    this.#removePopupMovie();
   }
 
-  setErrorUpdate(){
-    if(this.#mode === Mode.CARD){
+  setErrorUpdate() {
+    if (this.#mode === Mode.CARD) {
       this.#movieCard.updateElement({
         isDisable: false,
       });
@@ -84,7 +84,7 @@ export default class MovieCardPresenter {
     shake(element);
   }
 
-  setErrorAddComment(){
+  setErrorAddComment() {
     this.#popupMovie.updateElement({
       isDisable: false,
     });
@@ -105,7 +105,7 @@ export default class MovieCardPresenter {
     this.#movieCard.updateElement({
       isDisable: true,
     });
-    if(this.#mode === Mode.POPUP) {
+    if (this.#mode === Mode.POPUP) {
       this.#popupMovie.updateElement({
         isDisable: true,
       });
@@ -133,11 +133,11 @@ export default class MovieCardPresenter {
     render(this.#popupContainer, this.#bodyContainer);
   }
 
-  async #renderPopupMovie() {
-    const comments = await this.#moviesModel.getComments(this.#movie.id);
+  async renderPopupMovie(movie) {
+    const comments = await this.#moviesModel.getComments(movie.id);
     const prevPopupMovie = this.#popupMovie;
     this.#popupMovie = new PopupMovie({
-      movie: this.#movie,
+      movie: movie,
       comments: comments,
       onClickClosePopup: this.#handleClosePopupClick,
       onWatchlistClick: this.#handlerChangeWatchlist,
@@ -171,7 +171,7 @@ export default class MovieCardPresenter {
     if (this.#mode === Mode.POPUP) {
       return;
     }
-    await this.#renderPopupMovie();
+    await this.renderPopupMovie(this.#movie);
   };
 
   #handleClosePopupClick = () => {
@@ -183,10 +183,13 @@ export default class MovieCardPresenter {
       UserAction.UPDATE,
       UpdateType.MINOR,
       {
-        ...this.#movie, userDetails: {
-          ...this.#movie.userDetails,
-          watchlist: !this.#movie.userDetails.watchlist
-        }
+        movie: {
+          ...this.#movie, userDetails: {
+            ...this.#movie.userDetails,
+            watchlist: !this.#movie.userDetails.watchlist
+          }
+        },
+        mode: this.#mode
       });
   };
 
@@ -195,10 +198,13 @@ export default class MovieCardPresenter {
       UserAction.UPDATE,
       UpdateType.MINOR,
       {
-        ...this.#movie, userDetails: {
-          ...this.#movie.userDetails,
-          favorite: !this.#movie.userDetails.favorite
-        }
+        movie: {
+          ...this.#movie, userDetails: {
+            ...this.#movie.userDetails,
+            favorite: !this.#movie.userDetails.favorite
+          }
+        },
+        mode: this.#mode
       });
   };
 
@@ -206,7 +212,7 @@ export default class MovieCardPresenter {
     this.#handleDataChange(
       UserAction.UPDATE,
       UpdateType.MINOR,
-      {
+      { movie: {
         ...this.#movie, userDetails: {
           ...this.#movie.userDetails,
           alreadyWatched: !this.#movie.userDetails.alreadyWatched,
@@ -214,6 +220,8 @@ export default class MovieCardPresenter {
             ? this.#movie.userDetails.watchingDate = new Date()
             : this.#movie.userDetails.watchingDat = null
         }
+      },
+      mode: this.#mode
       });
   };
 

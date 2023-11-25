@@ -17,6 +17,11 @@ const TimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 5000,
 };
+
+const Mode = {
+  CARD: 'CARD',
+  POPUP: 'POPUP'
+};
 export default class Presenter {
   #containerMovies = new ContainerMovies();
   #moviesList = new MoviesList();
@@ -206,16 +211,34 @@ export default class Presenter {
     render(this.#numberOfFilms, this.#containerNumberOfFilms);
   }
 
+  #renderPopupMovie(updateMovie) {
+    if(this.#cardsMoviesPresentrs.has(updateMovie.movie.id)){
+      this.#cardsMoviesPresentrs.get(updateMovie.movie.id).renderPopupMovie(updateMovie.movie);
+      return;
+    }
+
+    const movieCard = new MovieCardPresenter({
+      containerCards: this.#moviesList.element,
+      moviesModel: this.#moviesModel,
+      bodyContainer: this.#bodyContainer,
+      onDateChange: this.#handleViewAction,
+      onModeChange: this.#handleChangeMode
+    });
+    this.#cardsMoviesPresentrs.set(updateMovie.movie.id, movieCard);
+    this.#cardsMoviesPresentrs.get(updateMovie.movie.id).renderPopupMovie(updateMovie.movie);
+  }
+
+
   #handleViewAction = async (actionUser, updateType, update) => {
     this.#uiBlocker.block();
 
     switch(actionUser){
       case UserAction.UPDATE:
-        this.#cardsMoviesPresentrs.get(update.id).setDisable();
+        this.#cardsMoviesPresentrs.get(update.movie.id).setDisable();
         try{
           await this.#moviesModel.updateMovie(updateType, update);
         } catch (err){
-          this.#cardsMoviesPresentrs.get(update.id).setErrorUpdate();
+          this.#cardsMoviesPresentrs.get(update.movie.id).setErrorUpdate();
         }
         break;
       case UserAction.ADD_COMMENT:
@@ -249,6 +272,9 @@ export default class Presenter {
         this.#renderInfoUser();
         this.#renderContainerMovies();
         this.#renderListMovies();
+        if(data.mode === Mode.POPUP){
+          this.#renderPopupMovie(data);
+        }
         break;
       case UpdateType.MAJOR:
         this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
@@ -262,6 +288,7 @@ export default class Presenter {
         this.#renderInfoUser();
         this.#renderBoard();
         this.#renderNumberOfFilms();
+        break;
     }
   };
 }
