@@ -19,6 +19,7 @@ const moviesModel = new MoviesModel ({
   commentsApiSevice: new CommentsApiService(END_POINT_COMENTS, AUTHORIZATION)
 });
 moviesModel.init();
+
 const filtersModel = new FilterModel ();
 
 const filterPresenter = new FilterPresenter ({
