@@ -130,7 +130,17 @@ export default class MoviesModel extends Observable {
   async deleteComments(updateType, update) {
     try {
       await this.#commentsApiSevice.deleteComment(update);
-      this._notify(updateType, update.movie);
+      const comments = await this.getComments(update.movie.id);
+      const commentsId = comments.map((comment) => comment.id);
+      const index = this.#movies.findIndex((movie) => movie.id === update.movie.id);
+      const updateMovie = this.#movies[index];
+      updateMovie.comments = commentsId;
+      this.#movies = [
+        ...this.#movies.slice(0, index),
+        updateMovie,
+        ...this.#movies.slice(index + 1)
+      ];
+      this._notify(updateType, updateMovie);
     } catch (err) {
       throw new Error('Can\'t delete comments');
     }

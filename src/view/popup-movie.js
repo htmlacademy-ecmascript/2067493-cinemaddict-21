@@ -87,12 +87,12 @@ export default class PopupMovie extends AbstractStatefulView {
   };
 
   #changeEmojiHandler = (evt) => {
-    const prevScroll = this.element.scrollTop;
     evt.preventDefault();
     this.updateElement({
       userEmoji: evt.target.value
     });
-    this.element.scrollTo(0, prevScroll);
+    this.element.querySelector('.film-details__comment-input')
+      .focus();
   };
 
   #inputTextCommentHandler = (evt) => {

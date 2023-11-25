@@ -15,7 +15,7 @@ import { SORT_TYPE, UserAction, UpdateType ,FILTER_TYPE } from '../const.js';
 const MOVIES_COUNT_PER_STEP = 5;
 const TimeLimit = {
   LOWER_LIMIT: 350,
-  UPPER_LIMIT: 5000,
+  UPPER_LIMIT: 1000,
 };
 
 const Mode = {
@@ -92,7 +92,7 @@ export default class Presenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearMoviesCard({resetRederendCount: true});
+    this.#clearMoviesCard();
     this.#renderContainerMovies();
     this.#renderListMovies();
   };
@@ -127,7 +127,6 @@ export default class Presenter {
   #renderListMovies() {
     const moviesCount = this.movies.length;
     const movies = this.movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount));
-
     if (moviesCount === 0) {
       this.#renderEmpty();
       return;
@@ -162,8 +161,7 @@ export default class Presenter {
     this.#cardsMoviesPresentrs.forEach((presenter) => presenter.resetView());
   };
 
-  #clearMoviesCard({resetSortType = false, resetRederendCount = false} = {}) {
-    const moviesCount = this.movies.length;
+  #clearMoviesCard({resetSortType = false} = {}) {
     this.#cardsMoviesPresentrs.forEach((presenter) => presenter.destroy());
     this.#cardsMoviesPresentrs.clear();
 
@@ -172,11 +170,7 @@ export default class Presenter {
       this.#currentSortType = SORT_TYPE.DEFAULT;
     }
 
-    if(resetRederendCount){
-      this.#renderedMoviesCount = MOVIES_COUNT_PER_STEP;
-    } else {
-      this.#renderedMoviesCount = Math.min(moviesCount, this.#renderedMoviesCount);
-    }
+    this.#renderedMoviesCount = MOVIES_COUNT_PER_STEP;
 
     remove(this.#containerMovies);
     remove(this.#empty);
@@ -212,8 +206,8 @@ export default class Presenter {
   }
 
   #renderPopupMovie(updateMovie) {
-    if(this.#cardsMoviesPresentrs.has(updateMovie.movie.id)){
-      this.#cardsMoviesPresentrs.get(updateMovie.movie.id).renderPopupMovie(updateMovie.movie);
+    if(this.#cardsMoviesPresentrs.has(updateMovie.id)){
+      this.#cardsMoviesPresentrs.get(updateMovie.id).renderPopupMovie(updateMovie);
       return;
     }
 
@@ -224,8 +218,8 @@ export default class Presenter {
       onDateChange: this.#handleViewAction,
       onModeChange: this.#handleChangeMode
     });
-    this.#cardsMoviesPresentrs.set(updateMovie.movie.id, movieCard);
-    this.#cardsMoviesPresentrs.get(updateMovie.movie.id).renderPopupMovie(updateMovie.movie);
+    this.#cardsMoviesPresentrs.set(updateMovie.id, movieCard);
+    this.#cardsMoviesPresentrs.get(updateMovie.id).renderPopupMovie(updateMovie);
   }
 
 
@@ -264,6 +258,10 @@ export default class Presenter {
   #handleModelEvent = (updateType, data) => {
     switch(updateType) {
       case UpdateType.PATH:
+        if(this.#cardsMoviesPresentrs.get(data.id).movieCard === null) {
+          this.#renderPopupMovie(data);
+          return;
+        }
         this.#cardsMoviesPresentrs.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -273,18 +271,18 @@ export default class Presenter {
         this.#renderContainerMovies();
         this.#renderListMovies();
         if(data.mode === Mode.POPUP){
-          this.#renderPopupMovie(data);
+          this.#renderPopupMovie(data.movie);
         }
         break;
       case UpdateType.MAJOR:
-        this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
+        this.#clearMoviesCard({resetSortType: true});
         this.#renderBoard();
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#infoUser);
         remove(this.#numberOfFilms);
-        this.#clearMoviesCard({resetSortType: true, resetRederendCount: true});
+        this.#clearMoviesCard({resetSortType: true});
         this.#renderInfoUser();
         this.#renderBoard();
         this.#renderNumberOfFilms();

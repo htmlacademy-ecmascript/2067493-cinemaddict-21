@@ -33,12 +33,12 @@ export default class MovieCardPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  async init(movie) {
+  init(movie) {
     this.#movie = movie;
     const prevCardMovie = this.#movieCard;
 
     this.#movieCard = new MovieCard({
-      movie: this.#movie,
+      movie: movie,
       onPopupClick: this.#handlePopupClick,
       onWatchlistClick: this.#handlerChangeWatchlist,
       onFavoriteClick: this.#handlerChangeFavorite,
@@ -53,7 +53,7 @@ export default class MovieCardPresenter {
     replace(this.#movieCard, prevCardMovie);
 
     if (this.#mode === Mode.POPUP) {
-      await this.renderPopupMovie(this.#movie);
+      this.renderPopupMovie(this.#movie);
     }
   }
 
@@ -102,9 +102,11 @@ export default class MovieCardPresenter {
   }
 
   setDisable() {
-    this.#movieCard.updateElement({
-      isDisable: true,
-    });
+    if(this.#movieCard !== null){
+      this.#movieCard.updateElement({
+        isDisable: true,
+      });
+    }
     if (this.#mode === Mode.POPUP) {
       this.#popupMovie.updateElement({
         isDisable: true,
@@ -117,9 +119,15 @@ export default class MovieCardPresenter {
       isDisable: true,
       isDeleting: true,
     });
-    this.#movieCard.updateElement({
-      isDisable: true,
-    });
+    if(this.#movieCard !== null){
+      this.#movieCard.updateElement({
+        isDisable: true,
+      });
+    }
+  }
+
+  get movieCard () {
+    return this.#movieCard;
   }
 
   #escKeyDownHandler = (evt) => {
@@ -134,6 +142,7 @@ export default class MovieCardPresenter {
   }
 
   async renderPopupMovie(movie) {
+    this.#movie = movie;
     const comments = await this.#moviesModel.getComments(movie.id);
     const prevPopupMovie = this.#popupMovie;
     this.#popupMovie = new PopupMovie({
@@ -237,7 +246,7 @@ export default class MovieCardPresenter {
     this.#handleDataChange(
       UserAction.ADD_COMMENT,
       UpdateType.PATH,
-      comment,
+      comment
     );
   };
 
